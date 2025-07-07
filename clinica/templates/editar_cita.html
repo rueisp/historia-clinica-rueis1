@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Editar Cita{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-10 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <h2 class="text-2xl font-bold mb-6 text-center">Editar Cita</h2>
+    
+    {# El action ahora incluye el 'next' para volver a la página correcta después de guardar #}
+    <form method="POST" 
+          action="{{ url_for('calendario.editar_cita', cita_id=cita.id, next=form_data.next_url if form_data and form_data.next_url else request.args.get('next')) }}">
+        
+        {# Campo oculto para 'next' para asegurar que se reenvíe en POST #}
+        {% if form_data and form_data.next_url %}
+            <input type="hidden" name="next" value="{{ form_data.next_url }}">
+        {% elif request.args.get('next') %}
+            <input type="hidden" name="next" value="{{ request.args.get('next') }}">
+        {% endif %}
+
+        <div class="mb-4">
+            <label for="paciente_id" class="block text-gray-700 text-sm font-bold mb-2">Paciente:</label>
+            <select name="paciente_id" id="paciente_id" class="w-full border rounded px-3 py-2">
+                {# 'pacientes' debe ser pasado desde la vista Flask (todos los pacientes para el dropdown) #}
+                {% for paciente_opt in pacientes %} 
+                    <option value="{{ paciente_opt.id }}" 
+                            {% if form_data and form_data.selected_paciente_id %}
+                                {% if paciente_opt.id == form_data.selected_paciente_id|int %}selected{% endif %}
+                            {% elif paciente_opt.id == cita.paciente_id %}
+                                selected
+                            {% endif %}>
+                        {{ paciente_opt.nombres }} {{ paciente_opt.apellidos }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label for="fecha" class="block text-gray-700 text-sm font-bold mb-2">Fecha:</label>
+            <input type="date" name="fecha" id="fecha" 
+                   value="{{ form_data.fecha_val if form_data and form_data.fecha_val is not none else cita.fecha.strftime('%Y-%m-%d') }}" 
+                   class="w-full border rounded px-3 py-2" required>
+        </div>
+
+        <div class="mb-4">
+            <label for="hora" class="block text-gray-700 text-sm font-bold mb-2">Hora:</label>
+            <input type="time" name="hora" id="hora" 
+                   value="{{ form_data.hora_val if form_data and form_data.hora_val is not none else cita.hora.strftime('%H:%M') }}" 
+                   class="w-full border rounded px-3 py-2" required>
+        </div>
+
+        <div class="mb-4">
+            <label for="doctor" class="block text-gray-700 text-sm font-bold mb-2">Doctor:</label>
+            <input type="text" name="doctor" id="doctor" 
+                   value="{{ form_data.doctor_val if form_data and form_data.doctor_val is not none else cita.doctor }}" 
+                   class="w-full border rounded px-3 py-2" required>
+        </div>
+
+        {# --- NUEVOS CAMPOS --- #}
+        <div class="mb-4">
+            <label for="motivo" class="block text-gray-700 text-sm font-bold mb-2">Motivo (Opcional):</label>
+            <input type="text" name="motivo" id="motivo" 
+                   value="{{ form_data.motivo_val if form_data and form_data.motivo_val is not none else (cita.motivo or '') }}" 
+                   class="w-full border rounded px-3 py-2">
+        </div>
+
+        <div class="mb-4">
+            <label for="observaciones" class="block text-gray-700 text-sm font-bold mb-2">Observaciones (Opcional):</label>
+            <textarea name="observaciones" id="observaciones" class="w-full border rounded px-3 py-2" rows="3">{{ form_data.observaciones_val if form_data and form_data.observaciones_val is not none else (cita.observaciones or '') }}</textarea>
+        </div>
+        {# --- FIN NUEVOS CAMPOS --- #}
+
+        <div class="flex justify-between items-center">
+             {# Botón Cancelar ahora usa la lógica de 'next_url' #}
+            <a href="{{ (form_data.next_url if form_data and form_data.next_url else request.args.get('next')) or url_for('calendario.mostrar_calendario') }}" 
+               class="text-blue-600 hover:underline">Cancelar</a>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Guardar Cambios
+            </button>
+        </div>
+    </form>
+    
+    {# Formulario para eliminar, con el 'next' para volver a la página correcta #}
+    <form action="{{ url_for('calendario.eliminar_cita', cita_id=cita.id) }}" method="POST" 
+          onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta cita?');" class="mt-4 text-center">
+        {% if form_data and form_data.next_url %}
+            <input type="hidden" name="next" value="{{ form_data.next_url }}">
+        {% elif request.args.get('next') %} {# Si vienes de GET con un 'next' #}
+            <input type="hidden" name="next" value="{{ request.args.get('next') }}">
+        {% else %} {# Fallback al calendario si no hay 'next' #}
+             <input type="hidden" name="next" value="{{ url_for('calendario.mostrar_calendario', anio=cita.fecha.year, mes=cita.fecha.month) }}">
+        {% endif %}
+        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+            Eliminar Cita
+        </button>
+    </form>
+</div>
+{% endblock %}

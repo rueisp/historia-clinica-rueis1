@@ -1,0 +1,97 @@
+<!-- templates/perfil.html -->
+{% extends "base.html" %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block content %}
+<style>
+    /* (Puedes copiar aquí los estilos de .card-custom, .form-group, etc. de editar_paciente.html) */
+    .container-custom { max-width: 800px; margin: 40px auto; }
+    .card-custom { background-color: #fff; border-radius: 20px; padding: 30px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); }
+    .card-custom h3 { font-size: 20px; font-weight: 600; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #e9ecef; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { margin-bottom: 8px; font-weight: 500; color: #4b5563; }
+    .form-control { border-radius: 10px; padding: 10px; border: 1px solid #d1d5db; }
+    .form-control:focus { border-color: #1D4ED8; box-shadow: none; }
+    .action-buttons { display: flex; justify-content: flex-end; gap: 15px; margin-top: 20px; }
+    .btn-save { background-color: #1D4ED8; color: white; border-radius: 10px; padding: 10px 20px; border: none; }
+    .btn-save:hover { background-color: #1e40af; }
+
+    /* ... en la etiqueta <style> de perfil.html ... */
+
+.action-buttons { 
+    display: flex; 
+    justify-content: flex-end; 
+    gap: 15px; 
+    margin-top: 20px; 
+}
+
+.btn-save { 
+    background-color: #1D4ED8; /* Azul */
+    color: white; 
+    border-radius: 10px; 
+    padding: 10px 20px; 
+    border: none;
+    transition: background-color 0.2s;
+}
+.btn-save:hover { background-color: #1e40af; }
+
+/* --- ▼▼▼ AÑADE ESTA CLASE PARA EL BOTÓN DE CANCELAR ▼▼▼ --- */
+.btn-cancel {
+    background-color: #e5e7eb; /* Gris claro */
+    color: #4b5563;
+    border-radius: 10px;
+    padding: 10px 20px;
+    border: none;
+    text-decoration: none; /* Importante para las etiquetas <a> */
+    display: inline-flex;  /* Para alinear bien el texto */
+    align-items: center;
+    transition: background-color 0.2s;
+}
+.btn-cancel:hover { 
+    background-color: #d1d5db; 
+}
+/* --- ▲▲▲ FIN DE LA CLASE AÑADIDA ▲▲▲ --- */
+</style>
+
+<div class="container-custom">
+    <div class="card-custom">
+        <h3>Editar Mi Perfil</h3>
+        <form method="POST" action="{{ url_for('main.perfil') }}">
+            
+            <!-- Datos Básicos -->
+            <div class="form-group">
+                <label for="nombre_completo">Nombre Completo</label>
+                <input type="text" class="form-control" id="nombre_completo" name="nombre_completo" value="{{ usuario.nombre_completo or '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Correo Electrónico</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ usuario.email }}" required>
+            </div>
+             <div class="form-group">
+                <label for="username">Nombre de Usuario (no se puede cambiar)</label>
+                <input type="text" class="form-control" id="username" name="username" value="{{ usuario.username }}" disabled>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Cambio de Contraseña -->
+            <h4 class="h5 mb-3">Cambiar Contraseña (opcional)</h4>
+            <div class="form-group">
+                <label for="password_actual">Contraseña Actual</label>
+                <input type="password" class="form-control" id="password_actual" name="password_actual">
+                <small class="form-text text-muted">Necesaria para establecer una nueva contraseña.</small>
+            </div>
+            <div class="form-group">
+                <label for="password_nueva">Nueva Contraseña</label>
+                <input type="password" class="form-control" id="password_nueva" name="password_nueva">
+            </div>
+
+            <div class="action-buttons">
+                <a href="{{ url_for('main.index') }}" class="btn btn-cancel">Volver</a>
+                <button type="submit" class="btn btn-save">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

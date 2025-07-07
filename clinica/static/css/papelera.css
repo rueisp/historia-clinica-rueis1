@@ -1,0 +1,50 @@
+/* En el <style> de papelera.html o tu CSS principal */
+.papelera-card {
+    /* background-color: white; */ /* Ya lo aplicaremos con Tailwind */
+    /* border-radius: 0.75rem; */ /* rounded-xl de Tailwind */
+    /* box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); */ /* shadow-lg de Tailwind */
+    margin-bottom: 1.5rem; /* mb-6 */
+}
+
+.papelera-card-header {
+    /* background-color: #111827; */ /* gray-900 o #000000 para negro */
+    /* color: white; */
+    padding: 0.75rem 1.5rem; /* py-3 px-6 */
+    /* border-bottom: 1px solid #e5e7eb; */ /* border-b border-gray-200 */
+    /* Para que solo las esquinas superiores sean redondas si el card general es redondo */
+    /* border-top-left-radius: 0.75rem; */
+    /* border-top-right-radius: 0.75rem; */
+}
+
+.papelera-item {
+    /* background-color: #f9fafb; */ /* gray-50 o blanco */
+    padding: 1rem 1.5rem; /* p-4 o p-6 */
+    /* border-bottom: 1px solid #e5e7eb; */ /* Para separar items si no usas divide-y */
+}
+.papelera-item:last-child {
+    /* border-bottom: none; */
+}
+
+/* Estilos para los botones de acción, si quieres personalizarlos más allá de Tailwind */
+.btn-papelera-restaurar {
+    /* Ejemplo: bg-blue-600 hover:bg-blue-700 text-white ... */
+}
+.btn-papelera-eliminar-perm {
+    /* Ejemplo: bg-red-600 hover:bg-red-700 text-white ... */
+}
+
+/* Pestañas (Tabs) - Puedes usar los estilos de Bootstrap como base y ajustarlos con Tailwind o CSS personalizado */
+.nav-tabs .nav-link {
+    /* border-color: transparent; */
+    /* color: #4b5563; */ /* gray-600 */
+}
+.nav-tabs .nav-link.active {
+    /* color: #111827; */ /* gray-900 o negro */
+    /* background-color: white; */
+    /* border-color: #d1d5db #d1d5db white; */ /* gray-300 y blanco para el borde activo */
+    font-weight: 600;
+}
+.nav-tabs .nav-link:hover {
+    /* border-color: #e5e7eb; */ /* gray-200 */
+    /* color: #000; */
+}

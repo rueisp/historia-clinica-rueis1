@@ -1,0 +1,323 @@
+{% extends "base.html" %}
+
+{% block title %}Perfil de {{ paciente.nombres }} {{ paciente.apellidos }}{% endblock %}
+
+{% block content %}
+<style>
+    /* --- ESTILOS GENERALES --- */
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .container-custom {
+        max-width: 1600px; /* Ancho extendido para 4 columnas */
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    /* --- ENCABEZADO DEL PERFIL --- */
+    .profile-header {
+        background-color: #000;
+        color: white;
+        border-radius: 20px;
+        padding: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    .profile-header .info h1 {
+        margin: 0 0 5px 0;
+        font-size: 28px;
+        font-weight: 600;
+    }
+    .profile-header .info p {
+        margin: 0;
+        opacity: 0.8;
+    }
+    .profile-header .actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    /* --- BOTONES PERSONALIZADOS --- */
+    .btn-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 15px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
+    }
+    .btn-custom .btn-icon { margin-right: 8px; }
+
+    .btn-primary-custom { background-color: #111827; color: white; }
+    .btn-primary-custom:hover { background-color: #1D4ED8; transform: translateY(-2px); }
+    .btn-secondary-custom { background-color: #6c757d; color: white; }
+    .btn-secondary-custom:hover { background-color: #5a6268; }
+    .btn-success-custom { background-color: #16a34a; color: white; }
+    .btn-success-custom:hover { background-color: #15803d; }
+    .btn-info-custom { background-color: #0284c7; color: white; }
+    .btn-info-custom:hover { background-color: #0369a1; }
+
+    /* --- LAYOUT DE 4 COLUMNAS --- */
+    .profile-layout {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+    }
+
+    /* --- TARJETA MODULAR --- */
+    .card-custom {
+        background-color: #ffffff;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+        margin-bottom: 25px; /* Espacio entre tarjetas en la misma columna */
+    }
+    .card-custom h3 {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 20px 0;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        align-items: center;
+    }
+    .card-custom h3 .card-icon { margin-right: 12px; color: #4b5563; }
+
+    /* --- ESTILOS DE DATOS DENTRO DE LAS TARJETAS --- */
+    .data-grid {
+        display: grid;
+        grid-template-columns: 1fr; /* Por defecto, una columna para mejor distribución interna */
+        gap: 18px;
+    }
+    .data-item .label {
+        display: block;
+        font-weight: 500;
+        color: #6c757d;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+    .data-item .value {
+        color: #111827;
+        font-weight: 500;
+        font-size: 15px;
+    }
+    .data-item .value.text-area {
+        white-space: pre-wrap;
+        font-size: 14px;
+        line-height: 1.6;
+        background-color: #f8f9fa;
+        padding: 12px;
+        border-radius: 8px;
+        display: block;
+        color: #343a40;
+    }
+
+    /* --- ESTILOS DE GALERÍA, EVOLUCIÓN, ETC. --- */
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        text-align: center;
+    }
+    .gallery-item img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .gallery-item img:hover { transform: scale(1.05); }
+    .gallery-item h5 { font-size: 14px; margin-top: 10px; font-weight: 500; }
+    
+    .evolucion-list .evolucion-item {
+        position: relative;
+        padding-left: 25px;
+        padding-bottom: 20px;
+        border-left: 2px solid #e9ecef;
+    }
+    .evolucion-list .evolucion-item:last-child { border-left: 2px solid transparent; padding-bottom: 0; }
+    .evolucion-list .evolucion-item::before {
+        content: ''; position: absolute; left: -7px; top: 5px; width: 12px; height: 12px;
+        border-radius: 50%; background-color: #6c757d; border: 2px solid #fff;
+    }
+    .evolucion-list .evolucion-item:first-child::before { background-color: #0d6efd; }
+    .evolucion-date { font-weight: 500; color: #343a40; font-size: 14px; margin-bottom: 5px; }
+    .evolucion-desc { color: #495057; font-size: 15px; }
+    .evolucion-form textarea { border-radius: 12px; border-color: #dee2e6; }
+    
+    .modal-content { border-radius: 20px; }
+    .modal-body img { border-radius: 12px; }
+
+    /* --- LÓGICA RESPONSIVE --- */
+    @media (max-width: 1400px) {
+        .profile-layout { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+        .profile-layout { grid-template-columns: 1fr; }
+        .profile-header { flex-direction: column; gap: 20px; text-align: center; }
+    }
+</style>
+
+<div class="container-custom">
+    <!-- Encabezado con Nombre y Acciones Principales -->
+    <div class="profile-header">
+        <div class="info">
+            <h1>{{ paciente.nombres }} {{ paciente.apellidos }}</h1>
+            <p>ID de Paciente: {{ paciente.id }}</p>
+        </div>
+        <div class="actions">
+            <a href="{{ url_for('pacientes.editar_paciente', id=paciente.id) }}" class="btn-custom btn-secondary-custom"><i data-lucide="edit-3" class="btn-icon"></i> Editar</a>
+            <a href="{{ url_for('pacientes.lista_pacientes') }}" class="btn-custom btn-primary-custom"><i data-lucide="users" class="btn-icon"></i> Ver todos</a>
+        </div>
+    </div>
+
+    <div class="profile-layout">
+        
+        <!-- === Columna 1: Info Personal, Ubicación y Admin === -->
+        <div class="column">
+            <div class="card-custom">
+                <h3><i data-lucide="user-circle" class="card-icon"></i>Datos Personales</h3>
+                <div class="data-grid">
+                    <div class="data-item"><span class="label">Documento</span><span class="value">{{ paciente.tipo_documento or '' }} {{ paciente.documento or 'N/A' }}</span></div>
+                    <div class="data-item"><span class="label">Teléfono</span><span class="value">{{ paciente.telefono }}</span></div>
+                    <div class="data-item"><span class="label">Email</span><span class="value">{{ paciente.email or 'N/A' }}</span></div>
+                    <div class="data-item"><span class="label">Fecha de Nacimiento</span><span class="value">{{ paciente.fecha_nacimiento.strftime('%d/%m/%Y') if paciente.fecha_nacimiento else 'N/A' }}</span></div>
+                    <div class="data-item"><span class="label">Edad</span><span class="value">{{ paciente.edad or 'N/A' }} años</span></div>
+                    <div class="data-item"><span class="label">Género</span><span class="value">{{ paciente.genero or 'N/A' }}</span></div>
+                    <div class="data-item"><span class="label">Estado Civil</span><span class="value">{{ paciente.estado_civil or 'N/A' }}</span></div>
+                    <div class="data-item"><span class="label">Ocupación</span><span class="value">{{ paciente.ocupacion or 'N/A' }}</span></div>
+                </div>
+            </div>
+            <div class="card-custom">
+                <h3><i data-lucide="map-pin" class="card-icon"></i>Ubicación</h3>
+                <div class="data-grid">
+                    <div class="data-item"><span class="label">Dirección</span><span class="value">{{ paciente.direccion or 'N/A' }}</span></div>
+                    <div class="data-item"><span class="label">Barrio</span><span class="value">{{ paciente.barrio or 'N/A' }}</span></div>
+                    <div class="data-item"><span class="label">Municipio</span><span class="value">{{ paciente.municipio or 'N/A' }}</span></div>
+                </div>
+            </div>
+            <div class="card-custom">
+                <h3><i data-lucide="file-badge" class="card-icon"></i>Información Administrativa</h3>
+                <div class="data-grid">
+                    <div class="data-item"><span class="label">Aseguradora</span><span class="value">{{ paciente.aseguradora or 'N/A' }}</span></div>
+                    <div class="data-item"><span class="label">Tipo de Vinculación</span><span class="value">{{ paciente.tipo_vinculacion or 'N/A' }}</span></div>
+                    <div class="data-item"><span class="label">Referido por</span><span class="value">{{ paciente.referido_por or 'N/A' }}</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- === Columna 2: Anamnesis y Antecedentes === -->
+        <div class="column">
+            <div class="card-custom">
+                <h3><i data-lucide="file-text" class="card-icon"></i>Anamnesis y Antecedentes</h3>
+                <div class="data-grid">
+                    <div class="data-item"><span class="label">Motivo de Consulta</span><span class="value text-area">{{ paciente.motivo_consulta or 'No especificado' }}</span></div>
+                    <div class="data-item"><span class="label">Enfermedad Actual</span><span class="value text-area">{{ paciente.enfermedad_actual or 'No especificado' }}</span></div>
+                    <div class="data-item"><span class="label">Antecedentes Personales</span><span class="value text-area">{{ paciente.antecedentes_personales or 'No especificado' }}</span></div>
+                    <div class="data-item"><span class="label">Antecedentes Familiares</span><span class="value text-area">{{ paciente.antecedentes_familiares or 'No especificado' }}</span></div>
+                    <div class="data-item"><span class="label">Antecedentes Quirúrgicos</span><span class="value text-area">{{ paciente.antecedentes_quirurgicos or 'No especificado' }}</span></div>
+                    <div class="data-item"><span class="label">Antecedentes Hemorrágicos</span><span class="value text-area">{{ paciente.antecedentes_hemorragicos or 'No especificado' }}</span></div>
+                    <div class="data-item"><span class="label">Farmacológicos</span><span class="value text-area">{{ paciente.farmacologicos or 'No especificado' }}</span></div>
+                    <div class="data-item"><span class="label">Reacción a Medicamentos</span><span class="value text-area">{{ paciente.reaccion_medicamentos or 'No especificado' }}</span></div>
+                    <div class="data-item"><span class="label">Alergias</span><span class="value text-area">{{ paciente.alergias or 'No especificado' }}</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- === Columna 3: Hábitos, Tratamiento y Galería === -->
+        <div class="column">
+            <div class="card-custom">
+                <h3><i data-lucide="activity" class="card-icon"></i>Hábitos y Examen Físico</h3>
+                 <div class="data-grid">
+                    <div class="data-item"><span class="label">Hábitos</span><span class="value text-area">{{ paciente.habitos or 'No especificado' }}</span></div>
+                    <div class="data-item"><span class="label">Higiene Oral (Cepillado)</span><span class="value text-area">{{ paciente.cepillado or 'No especificado' }}</span></div>
+                    <div class="data-item"><span class="label">Examen Físico</span><span class="value text-area">{{ paciente.examen_fisico or 'No especificado' }}</span></div>
+                    <div class="data-item"><span class="label">Última Visita al Odontólogo</span><span class="value text-area">{{ paciente.ultima_visita_odontologo or 'No especificado' }}</span></div>
+                 </div>
+            </div>
+            <div class="card-custom">
+                <h3><i data-lucide="clipboard-list" class="card-icon"></i>Plan de Tratamiento</h3>
+                <div class="data-grid">
+                    <div class="data-item"><span class="value text-area">{{ paciente.plan_tratamiento or 'No se ha definido un plan de tratamiento.' }}</span></div>
+                </div>
+            </div>
+
+            <div class="card-custom">
+                <h3><i data-lucide="clipboard-list" class="card-icon"></i>Observaciones</h3>
+                <div class="data-grid">
+                    <div class="data-item"><span class="value text-area">{{ paciente.observaciones or 'No se han registrado observaciones.' }}</span></div>
+                </div>
+            </div>
+
+            {% if paciente.imagen_1 or paciente.imagen_2 or paciente.dentigrama_canvas %}
+            <div class="card-custom">
+                <h3><i data-lucide="image" class="card-icon"></i>Galería</h3>
+                <div class="gallery-grid">
+                    {% if paciente.imagen_1 %}<div class="gallery-item" data-bs-toggle="modal" data-bs-target="#modalImagen1"><img src="{{ url_for('static', filename=paciente.imagen_1) }}" alt="Imagen 1"><h5>Imagen 1</h5></div>{% endif %}
+                    {% if paciente.imagen_2 %}<div class="gallery-item" data-bs-toggle="modal" data-bs-target="#modalImagen2"><img src="{{ url_for('static', filename=paciente.imagen_2) }}" alt="Imagen 2"><h5>Imagen 2</h5></div>{% endif %}
+                    {% if paciente.dentigrama_canvas %}<div class="gallery-item" data-bs-toggle="modal" data-bs-target="#modalDentigrama"><img src="{{ url_for('static', filename=paciente.dentigrama_canvas) }}" alt="Dentigrama"><h5>Dentigrama</h5></div>{% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- === Columna 4: Evolución y Otras Acciones === -->
+        <div class="column">
+            {% if paciente.nombre_responsable %}
+            <div class="card-custom">
+                <h3><i data-lucide="shield" class="card-icon"></i>Datos del Responsable</h3>
+                <div class="data-grid">
+                    <div class="data-item"><span class="label">Nombre</span><span class="value">{{ paciente.nombre_responsable }}</span></div>
+                    <div class="data-item"><span class="label">Teléfono</span><span class="value">{{ paciente.telefono_responsable or 'N/A' }}</span></div>
+                    <div class="data-item"><span class="label">Parentesco</span><span class="value">{{ paciente.parentesco or 'N/A' }}</span></div>
+                </div>
+            </div>
+            {% endif %}
+            <div class="card-custom">
+                <h3><i data-lucide="trending-up" class="card-icon"></i>Evolución</h3>
+                <div class="evolucion-list mb-4">
+                    {% for evolucion in paciente.evoluciones | sort(attribute='fecha', reverse=True) %}
+                    <div class="evolucion-item">
+                        <div class="evolucion-date">{{ evolucion.fecha.strftime('%d de %B, %Y') }}</div>
+                        <p class="evolucion-desc">{{ evolucion.descripcion }}</p>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No hay evoluciones registradas.</p>
+                    {% endfor %}
+                </div>
+                <hr>
+                <h4 class="h6 mb-3 mt-4">Añadir Nueva Evolución</h4>
+                <form action="{{ url_for('evoluciones.agregar_evolucion', paciente_id=paciente.id) }}" method="post" class="evolucion-form">
+                    <div class="mb-3">
+                        <textarea name="descripcion" class="form-control" rows="3" placeholder="Escribe aquí la nueva evolución..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-custom btn-secondary-custom w-100">Guardar Evolución</button>
+                </form>
+            </div>
+            <div class="card-custom">
+                <h3><i data-lucide="menu-square" class="card-icon"></i>Otras Acciones</h3>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('export.exportar_excel', id=paciente.id) }}" class="btn-custom btn-success-custom"><i data-lucide="file-spreadsheet" class="btn-icon"></i> Exportar a Excel</a>
+                    <a href="{{ url_for('export.exportar_word', id=paciente.id) }}" class="btn-custom btn-info-custom"><i data-lucide="file-text" class="btn-icon"></i> Exportar a Word</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modales para las imágenes (sin cambios) -->
+{% if paciente.imagen_1 %}<div class="modal fade" id="modalImagen1" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-body"><img src="{{ url_for('static', filename=paciente.imagen_1) }}" class="img-fluid" alt="Imagen 1"></div></div></div></div>{% endif %}
+{% if paciente.imagen_2 %}<div class="modal fade" id="modalImagen2" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-body"><img src="{{ url_for('static', filename=paciente.imagen_2) }}" class="img-fluid" alt="Imagen 2"></div></div></div></div>{% endif %}
+{% if paciente.dentigrama_canvas %}<div class="modal fade" id="modalDentigrama" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-body"><img src="{{ url_for('static', filename=paciente.dentigrama_canvas) }}" class="img-fluid" alt="Dentigrama"></div></div></div></div>{% endif %}
+
+{% endblock %}

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Paciente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Registrar Paciente</h2>
+
+        <!-- 🔥 Aquí aparece el mensaje flash como data para alert -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div id="flash-message" data-message="{{ messages[0] }}"></div>
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('pacientes.crear_paciente') }}" method="post" enctype="multipart/form-data" id="formRegistrarPaciente">
+            <fieldset class="border p-3 mb-3 shadow-sm rounded-3">
+                <legend class="w-auto">Datos Personales</legend>
+            
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="nombres" class="form-label">Nombres <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="nombres" name="nombres" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="apellidos" class="form-label">Apellidos <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="apellidos" name="apellidos" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="tipo_documento" class="form-label">Tipo de Documento <span class="text-danger">*</span></label>
+                        <select class="form-control" id="tipo_documento" name="tipo_documento" required>
+                            <option value="">Seleccione</option>
+                            <option value="CC">Cédula de Ciudadanía</option>
+                            <option value="TI">Tarjeta de Identidad</option>
+                            <option value="RC">Registro Civil</option>
+                            <option value="CE">Cédula de Extranjería</option>
+                            <option value="PA">Pasaporte</option>
+                            <option value="PPT">Permiso de Protección</option>
+
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="documento" class="form-label">Documento <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="documento" name="documento">
+                    </div>
+                </div>
+            
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="edad" class="form-label">Edad <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="edad" name="edad" required readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="telefono" class="form-label">Teléfono <span class="text-danger">*</span></label>
+                        <input type="text" pattern="\d{7,15}" title="Solo números, entre 7 y 15 dígitos" class="form-control" id="telefono" name="telefono" required>
+                    </div>
+                </div>
+                    <!-- Línea 2: Género, Estado civil -->
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="genero" class="form-label">Género</label>
+                        <select class="form-control" id="genero" name="genero">
+                            <option value="">Seleccione</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="estado_civil" class="form-label">Estado Civil</label>
+                        <select class="form-control" id="estado_civil" name="estado_civil">
+                            <option value="">Seleccione</option>
+                            <option value="Soltero/a">Soltero/a</option>
+                            <option value="Casado/a">Casado/a</option>
+                            <option value="Unión Libre">Unión Libre</option>
+                            <option value="Separado/a">Separado/a</option>
+                            <option value="Viudo/a">Viudo/a</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <fieldset class="border p-3 mb-4 shadow-sm rounded-3">                    <legend class="w-auto px-2">Dirección</legend>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" id="direccion" name="direccion">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="barrio" class="form-label">Barrio</label>
+                            <input type="text" class="form-control" id="barrio" name="barrio">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="municipio" class="form-label">Municipio</label>
+                            <input type="text" class="form-control" id="municipio" name="municipio">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="departamento" class="form-label">Departamento</label>
+                            <input type="text" class="form-control" id="departamento" name="departamento">
+                        </div>
+                    </div>
+                </fieldset>
+                
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="aseguradora" class="form-label">Nombre de Aseguradora</label>
+                        <input type="text" class="form-control" id="aseguradora" name="aseguradora">
+                    </div>
+                
+                    <div class="col-md-3">
+                        <label for="tipo_vinculacion" class="form-label">Tipo de Vinculación</label>
+                        <select class="form-control" id="tipo_vinculacion" name="tipo_vinculacion">
+                            <option value="">Seleccione</option>
+                            <option value="Contribuyente">Contribuyente</option>
+                            <option value="Beneficiario">Beneficiario</option>
+                            <option value="Subsidiado">Subsidiado</option>
+                        </select> 
+                    </div>                       
+                
+                    <div class="col-md-3">
+                        <label for="ocupacion" class="form-label">Ocupación</label>
+                        <input type="text" class="form-control" id="ocupacion" name="ocupacion">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="referido_por" class="form-label">Referido por</label>
+                        <input type="text" class="form-control" id="referido_por" name="referido_por">
+                    </div>
+                </div>
+                
+            </fieldset>
+
+            <!-- 👇 Agregás esto justo acá abajo -->
+            <fieldset class="border p-3 mt-4 shadow-sm rounded-3">
+                <legend>Datos del Responsable</legend>
+        
+                <div class="mb-3">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="nombre_responsable" class="form-label">Nombre del Responsable</label>
+                            <input type="text" class="form-control" id="nombre_responsable" name="nombre_responsable">
+                        </div>
+                    
+                        <div class="col-md-4">
+                            <label for="telefono_responsable" class="form-label">Teléfono del Responsable</label>
+                            <input type="text" class="form-control" id="telefono_responsable" name="telefono_responsable">
+                        </div>
+                    
+                        <div class="col-md-4">
+                            <label for="parentesco" class="form-label">Parentesco</label>
+                            <input type="text" class="form-control" id="parentesco" name="parentesco">
+                        </div>
+                    </div>
+                </div>    
+            </fieldset>
+
+            <fieldset class="border p-3 mt-4 shadow-sm rounded-3">
+                <legend class="w-auto px-2">Antecedentes Personales</legend>
+            
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="motivo_consulta" class="form-label">Motivo de Consulta</label>
+                        <input type="text" class="form-control" id="motivo_consulta" name="motivo_consulta">
+                    </div>
+                
+                    <div class="col-md-6">
+                        <label for="enfermedad_actual" class="form-label">Enfermedad Actual</label>
+                        <input type="text" class="form-control" id="enfermedad_actual" name="enfermedad_actual">
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="antecedentes_personales" class="form-label">Antecedentes Personales</label>
+                        <input type="text" class="form-control" id="antecedentes_personales" name="antecedentes_personales">
+                    </div>
+                
+                    <div class="col-md-6">
+                        <label for="antecedentes_familiares" class="form-label">Antecedentes Familiares</label>
+                        <input type="text" class="form-control" id="antecedentes_familiares" name="antecedentes_familiares">
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="antecedentes_quirurgicos" class="form-label">Antecedentes Quirúrgicos</label>
+                        <input type="text" class="form-control" id="antecedentes_quirurgicos" name="antecedentes_quirurgicos">
+                    </div>
+                
+                    <div class="col-md-6">
+                        <label for="antecedentes_hemorragicos" class="form-label">Antecedentes Hemorrágicos</label>
+                        <input type="text" class="form-control" id="antecedentes_hemorragicos" name="antecedentes_hemorragicos">
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="farmacologicos" class="form-label">Farmacológicos</label>
+                        <input type="text" class="form-control" id="farmacologicos" name="farmacologicos">
+                    </div>
+                
+                    <div class="col-md-6">
+                        <label for="reaccion_medicamentos" class="form-label">Reacción a Medicamentos</label>
+                        <input type="text" class="form-control" id="reaccion_medicamentos" name="reaccion_medicamentos">
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="alergias" class="form-label">Alergias</label>
+                        <input type="text" class="form-control" id="alergias" name="alergias">
+                    </div>
+                
+                    <div class="col-md-6">
+                        <label for="habitos" class="form-label">Hábitos</label>
+                        <input type="text" class="form-control" id="habitos" name="habitos">
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="cepillado" class="form-label">Cepillado</label>
+                        <input type="text" class="form-control" id="cepillado" name="cepillado">
+                    </div>
+                
+                    <div class="col-md-6">
+                        <label for="examen_fisico" class="form-label">Examen Físico</label>
+                        <input type="text" class="form-control" id="examen_fisico" name="examen_fisico">
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="ultima_visita_odontologo" class="form-label">Última Visita al Odontólogo</label>
+                        <input type="text" class="form-control" id="ultima_visita_odontologo" name="ultima_visita_odontologo">
+                    </div>
+                
+                    <div class="col-md-6">
+                        <label for="plan_tratamiento" class="form-label">Plan de Tratamiento</label>
+                        <input type="text" class="form-control" id="plan_tratamiento" name="plan_tratamiento">
+                    </div>
+
+                                        <!-- ▼▼▼ NUEVO CAMPO 'OBSERVACIONES' ▼▼▼ -->
+                    <div class="mb-3">
+                        <label for="observaciones" class="form-label">Observaciones</label>
+                        <textarea class="form-control" id="observaciones" name="observaciones" rows="3">{{ form_data.get('observaciones', '') }}</textarea>
+                    </div>
+                    <!-- ▲▲▲ FIN NUEVO CAMPO ▲▲▲ -->
+                </div>
+                
+            </fieldset>
+
+            <fieldset class="border p-3 mt-4 shadow-sm rounded-3">
+                <legend>Dentigrama</legend>
+                <br>
+                <div>
+                    <canvas id="dentigrama_canvas"></canvas>
+                    <br>
+                    <!-- Botones para cambiar el color del pincel -->
+                    <button type="button" onclick="cambiarColor('red')">🔴 Rojo</button>
+                    <button type="button" onclick="cambiarColor('blue')">🔵 Azul</button>
+                    <button type="button" onclick="cambiarColor('black')">⚫ Negro</button>
+                    <button type="button" onclick="limpiarCanvas()">🧹 Limpiar</button>
+                    <button type="button" onclick="deshacer()">↩️ Deshacer</button>
+                    <button type="button" onclick="accionBotonGuardarCanvas()">💾 Aplicar Cambios al Dentigrama</button>
+                </div>
+                <br>
+                <input type="hidden" name="dentigrama_canvas" id="dentigrama_canvas_input">
+            </fieldset>
+
+            <fieldset class="border p-3 mt-4 shadow-sm rounded-3">
+                <legend>Imágenes del Paciente</legend>
+            
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="imagen_1" class="form-label">Imágen 1</label>
+                        <input type="file" class="form-control" id="imagen_1" name="imagen_1" accept="image/*" onchange="previewImage(this, 'preview_1')">
+                        <img id="preview_1" src="#" alt="Vista previa" class="img-fluid mt-2 rounded" style="display: none; max-height: 200px;">
+                    </div>
+            
+                    <div class="col-md-4 mb-3">
+                        <label for="imagen_2" class="form-label">Imágen 2</label>
+                        <input type="file" class="form-control" id="imagen_2" name="imagen_2" accept="image/*" onchange="previewImage(this, 'preview_2')">
+                        <img id="preview_2" src="#" alt="Vista previa" class="img-fluid mt-2 rounded" style="display: none; max-height: 200px;">
+                    </div>
+                </div>
+            </fieldset>
+            
+            
+            
+            <div class="mt-5 mb-5 d-flex gap-3 justify-content-center">
+                <button type="submit" class="btn btn-dark">Guardar</button>
+                <a href="{{ url_for('pacientes.lista_pacientes') }}" class="btn btn-secondary">Volver</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- 💬 Script para mostrar el mensaje flash como alert -->
+    <script>
+        const flashDiv = document.getElementById("flash-message");
+        if (flashDiv) {
+        const mensaje = flashDiv.getAttribute("data-message");
+        if (mensaje) {
+            alert(mensaje);
+        }
+    }
+    </script>
+    <script>
+    const fechaNacimientoInput = document.getElementById('fecha_nacimiento');
+    const edadInput = document.getElementById('edad');
+
+    fechaNacimientoInput.addEventListener('change', function () {
+        const fechaNacimiento = new Date(this.value);
+        const hoy = new Date();
+
+        let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+        const mes = hoy.getMonth() - fechaNacimiento.getMonth();
+
+        if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+            edad--;
+        }
+
+        edadInput.value = edad;
+    });
+    </script>
+    <script>
+        function previewImage(input, previewId) {
+            const file = input.files[0];
+            const preview = document.getElementById(previewId);
+    
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = '#';
+                preview.style.display = 'none';
+            }
+        }
+    </script> 
+    
+    
+    <script>
+    // Tus otros scripts (edad, preview imagen) aquí...
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formRegistrarPaciente');
+            if (form) {
+                form.addEventListener('submit', function(event) {
+                    // Llama a la función de dentigrama.js para actualizar el input
+                    // antes de que el formulario se envíe realmente.
+                    if (typeof prepararDentigramaParaEnvio === 'function') {
+                        console.log("Intentando preparar dentigrama para envío...");
+                        prepararDentigramaParaEnvio();
+                    } else {
+                        console.warn("Función prepararDentigramaParaEnvio no encontrada. El dentigrama podría no enviarse correctamente.");
+                        // Opcional: Podrías prevenir el envío si esto es crítico
+                        // event.preventDefault();
+                        // alert("Error: No se pudo preparar el dentigrama para guardar.");
+                    }
+                });
+            } else {
+                console.error("Formulario 'formRegistrarPaciente' no encontrado.");
+            }
+
+            // La carga inicial del dentigrama ya se maneja dentro de dentigrama.js
+            // con imagenFondo.onload y el chequeo de imagenFondo.complete.
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/dentigrama.js') }}"></script>
+
+</body>
+</html>

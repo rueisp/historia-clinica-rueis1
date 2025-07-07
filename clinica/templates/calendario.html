@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block title %}Calendario de Citas{% endblock %}
+
+{% block head_extra %}
+<style>
+    /* Estilos base para el calendario. Puedes moverlos a un archivo CSS si prefieres. */
+    .calendar-container {
+        /* Tailwind: max-w-4xl mx-auto p-4 sm:p-6 bg-gray-50 rounded-lg shadow-lg */
+        /* max-width: 900px; ya no es necesario aquí, se controla con clases TW */
+    }
+
+    .calendar-header h2 {
+        /* Tailwind: text-xl sm:text-2xl font-bold text-gray-800 */
+    }
+
+    /* El calendar-grid usa clases de Tailwind directamente */
+    /* .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1px;
+        background-color: #e5e7eb;
+        border: 1px solid #e5e7eb;
+    } */
+
+    .day {
+        /* min-height será controlado por clases de Tailwind responsivas */
+        /* Tailwind: bg-white p-1 sm:p-2 flex flex-col relative transition-colors duration-150 */
+        /* border ya está en las clases */
+    }
+
+    .day.empty-day {
+        /* Tailwind: bg-gray-100 cursor-default */
+    }
+
+    .day.today .day-number { /* Cambiado para aplicar solo al número */
+        /* Tailwind: bg-blue-500 text-white rounded-full */
+    }
+
+    /* Popups (sin cambios significativos en la estructura, solo asegurar que el JS los posicione bien) */
+    .appointments-popup {
+        display: none;
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        padding: 10px;
+        z-index: 20; /* Más alto que la barra inferior si es necesario */
+        min-width: 200px; /* Ajusta según necesidad */
+        max-width: 280px;
+        border-radius: 4px;
+    }
+    .appointment-detail {
+        /* Tailwind: text-xs mb-1 p-1 border-b last:border-b-0 */
+    }
+    .text-xxs {
+        font-size: 0.65rem;
+        line-height: 0.85rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="calendar-container max-w-4xl mx-auto p-3 sm:p-4 md:p-6 bg-gray-50 rounded-lg shadow-lg my-4">
+    <div class="calendar-header flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+        <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 whitespace-nowrap">
+            Calendario - {{ nombre_mes_display }} {{ anio }}
+        </h2>
+
+        <div class="controls-wrapper flex flex-col sm:flex-row sm:items-center flex-wrap gap-2">
+            <a href="{{ url_for('main.index') }}" class="bg-gray-900 hover:bg-gray-800 text-white text-xs sm:text-sm font-medium py-1.5 px-3 rounded shadow-sm transition duration-200 order-3 sm:order-1">
+                Volver
+            </a>
+            <form method="get" action="{{ url_for('calendario.mostrar_calendario') }}" class="flex items-center gap-1 sm:gap-2 order-1 sm:order-2 w-full sm:w-auto">
+                <select name="mes" class="form-select text-xs sm:text-sm border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 flex-grow sm:flex-grow-0">
+                    {% for m in range(1, 13) %}
+                        <option value="{{ m }}" {% if m == mes %}selected{% endif %}>{{ nombres_meses[m-1]|truncate(3, True, '') if nombres_meses else m }}</option>
+                    {% endfor %}
+                </select>
+                <select name="anio" class="form-select text-xs sm:text-sm border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    {% for a in range(anio - 2, anio + 3) %}
+                        <option value="{{ a }}" {% if a == anio %}selected{% endif %}>{{ a }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm font-medium py-1.5 px-2 sm:px-3 rounded shadow-sm transition duration-200">Ir</button>
+            </form>
+             <a href="{{ url_for('calendario.registrar_cita', next=request.full_path) }}" class="bg-gray-500 hover:bg-gray-600 text-white text-xs sm:text-sm font-medium py-1.5 px-3 rounded shadow-sm transition duration-200 order-2 sm:order-3 whitespace-nowrap">
+                + Nueva Cita
+            </a>
+        </div>
+    </div>
+
+    <!-- Contenedor para el grid del calendario que puede tener scroll horizontal si es necesario -->
+    <div class="overflow-x-auto shadow-sm rounded">
+        <div class="grid grid-cols-7 text-center text-xs sm:text-sm font-semibold text-gray-600 bg-gray-100 py-2">
+            <div>Dom</div>
+            <div>Lun</div>
+            <div>Mar</div>
+            <div>Mié</div>
+            <div>Jue</div>
+            <div>Vie</div>
+            <div>Sáb</div>
+        </div>
+
+        <div class="calendar-grid grid grid-cols-7 gap-px bg-gray-300 border border-gray-300">
+            {% for dia in dias %}
+            <div class="day bg-white hover:bg-gray-50 border-gray-200 
+                 p-1 sm:p-2 flex flex-col relative transition-colors duration-150
+                 min-h-[70px] sm:min-h-[90px] md:min-h-[110px] {/* Altura responsiva */}
+                 {% if not dia.fecha %}empty-day !bg-gray-100 cursor-default{% endif %}"
+                 {% if dia.fecha %}
+                     title="{% if dia.citas %}{{ dia.citas|length }} cita{{ 's' if dia.citas|length != 1 else '' }}{% else %}Añadir cita para el {{ dia.fecha.day }}/{{ dia.fecha.month }}{% endif %}"
+                 {% endif %}>
+
+                {% if dia.fecha %}
+                    <div class="day-header flex justify-between items-center mb-0.5 sm:mb-1">
+                        <span class="day-number text-xs sm:text-sm font-medium 
+                                     {% if dia.hoy %}bg-blue-500 text-white rounded-full px-1.5 py-0.5 sm:px-2 sm:py-1{% else %}text-gray-700{% endif %}">
+                            {{ dia.fecha.day }}
+                        </span>
+                        <a href="{{ url_for('calendario.registrar_cita', fecha=dia.fecha.strftime('%Y-%m-%d'), next=request.full_path) }}" 
+                           class="add-appointment-btn text-green-500 hover:text-green-600 p-0.5 sm:p-1 rounded-full hover:bg-green-100"
+                           title="Añadir cita el {{ dia.fecha.strftime('%d/%m/%Y') }}">
+                            <i data-lucide="plus-circle" class="w-3 h-3 sm:w-4 sm:h-4"></i>
+                        </a>
+                    </div>
+
+                    <div class="appointments-content flex-grow flex flex-col justify-between text-center sm:text-left">
+                        {% if dia.citas %}
+                            <div class="appointment-indicator text-xxs sm:text-xs text-gray-600 mt-0.5 sm:mt-1">
+                                {{ dia.citas|length }} cita{{ 's' if dia.citas|length != 1 else '' }}
+                            </div>
+                            <button class="toggle-appointments-popup text-xxs sm:text-xs text-blue-600 hover:underline mt-1 sm:mt-auto" data-day-id="{{ dia.fecha.strftime('%Y-%m-%d') }}">
+                                Ver citas
+                            </button>
+                        {% else %}
+                            <div class="text-xxs sm:text-xs text-gray-400 italic flex-grow flex items-center justify-center">
+                                Sin citas
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- El popup con las citas (sin cambios en su estructura interna aquí) -->
+                    {% if dia.citas %}
+                    <div class="appointments-popup" id="popup-{{ dia.fecha.strftime('%Y-%m-%d') }}">
+                        <h4 class="text-xs sm:text-sm font-semibold mb-1 sm:mb-2">Citas del {{ dia.fecha.day }}/{{ dia.fecha.month }}:</h4>
+                        {% for cita in dia.citas %}
+                            <div class="appointment-detail text-xs mb-1 p-1 border-b last:border-b-0">
+                                <div>
+                                    <strong>{{ cita.hora.strftime('%H:%M') }}</strong> -
+                                    {{ cita.paciente.nombres }} {{ cita.paciente.apellidos }}
+                                    <span class="text-gray-500 block text-xxs">Dr/a. {{ cita.doctor }}</span>
+                                </div>
+                                <div class="appointment-actions mt-1 flex gap-2" style="font-size: 0.9em;">
+                                    <a href="{{ url_for('calendario.editar_cita', cita_id=cita.id, next=request.full_path) }}"
+                                       class="text-blue-600 hover:underline">
+                                        Editar
+                                    </a>
+                                    <form action="{{ url_for('calendario.eliminar_cita', cita_id=cita.id) }}" method="POST" class="inline-block">
+                                        <input type="hidden" name="next" value="{{ request.full_path }}">
+                                        <button type="submit" class="text-red-500 hover:underline" onclick="return confirm('¿Eliminar esta cita?')">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <button class="close-popup text-xs text-red-600 hover:underline mt-2 w-full text-center bg-gray-100 hover:bg-gray-200 p-1 rounded">Cerrar</button>
+                    </div>
+                    {% endif %}
+
+                {% else %}
+                    {# Celda vacía para días fuera del mes #}
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{# Asegúrate que lucide.createIcons() se llame si es necesario, base.html ya debería hacerlo #}
+<script src="{{ url_for('static', filename='js/calendar_popups.js') }}"></script>
+{# Si calendar_popups.js usa document.addEventListener('DOMContentLoaded', ...), debería funcionar bien. #}
+{# Si estás cargando el calendario (o partes de él) vía AJAX (como un calendar_fragment.html),
+   necesitarás reinicializar los popups y los íconos lucide para el nuevo contenido. #}
+
+{% endblock %}

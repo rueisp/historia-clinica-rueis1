@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Pacientes - Consultorio{% endblock %}
+
+{% block head_extra %}
+    <style>
+        /* ---- Contenedores generales de la página ---- */
+        .pacientes-main-container-wrapper {
+            background-color: #f8f9fa; /* Fondo gris claro para toda el área */
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            min-height: calc(100vh - 120px); /* Ajusta 120px según altura combinada de tu nav/footer fijos */
+        }
+
+        .pacientes-content-card {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            /* El ancho es controlado por el .container de Bootstrap padre */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        @media (min-width: 768px) { /* Más padding en PC */
+            .pacientes-content-card {
+                padding: 2rem;
+            }
+        }
+
+
+        /* ---- Estilos para la tabla ---- */
+        .table-pacientes-minimalista {
+            width: 100%; /* Que la tabla intente ocupar el 100% de su contenedor (.table-responsive) */
+            min-width: 780px; /* Ancho mínimo antes de que el scroll sea muy obvio. AJUSTA ESTE VALOR. */
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            font-size: 0.95rem; /* Tamaño de fuente base */
+        }
+
+        .table-pacientes-minimalista th,
+        .table-pacientes-minimalista td {
+            white-space: nowrap; /* Evita que el texto se divida en líneas, usa scroll si es necesario */
+            padding: 0.9rem 1rem;
+            vertical-align: middle;
+            text-align: left;
+        }
+
+        /* Encabezado de la tabla negro */
+        .table-pacientes-minimalista thead.thead-custom-dark th {
+            background-color: #000000;
+            color: #ffffff;
+            font-weight: 600;
+            text-transform: none;
+            border: none;
+        }
+        .table-pacientes-minimalista thead.thead-custom-dark tr:first-child th:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+        .table-pacientes-minimalista thead.thead-custom-dark tr:first-child th:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        .table-pacientes-minimalista thead.thead-custom-dark th.columna-acciones-header {
+            text-align: center;
+        }
+
+        /* Celdas del cuerpo de la tabla (gris suave) */
+        .table-pacientes-minimalista tbody td {
+            color: #343a40;
+            background-color: #f8f9fa; /* Gris suave */
+            border: none;
+        }
+        .table-pacientes-minimalista tbody tr td:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+        .table-pacientes-minimalista tbody tr td:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        .table-pacientes-minimalista tbody tr:hover td {
+             background-color: #e9ecef; /* Hover más oscuro */
+        }
+        .table-pacientes-minimalista tbody td.columna-acciones {
+            text-align: center;
+        }
+
+        /* ---- Estilos para los botones de acción en la tabla ---- */
+        .table-pacientes-minimalista .btn-accion {
+            padding: 0.4rem 0.7rem; font-size: 0.85rem; border-radius: 6px; margin: 0 0.2rem; line-height: 1.2;
+            border: 1px solid transparent; color: white; transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+            display: inline-flex; align-items: center; white-space: nowrap;
+        }
+        .table-pacientes-minimalista .btn-accion i { width: 1em; height: 1em; vertical-align: middle; margin-right: 0.35em; }
+        .table-pacientes-minimalista form[style*="display:inline;"] { margin: 0; padding: 0; display: inline-flex !important; }
+
+        .table-pacientes-minimalista .btn-mostrar.btn-accion { background-color: #212529; border-color: #212529; }
+        .table-pacientes-minimalista .btn-mostrar.btn-accion:hover { background-color: #343a40; border-color: #343a40; opacity: 0.85; }
+        .table-pacientes-minimalista .btn-editar.btn-accion { background-color: #6c757d; border-color: #6c757d; }
+        .table-pacientes-minimalista .btn-editar.btn-accion:hover { background-color: #5a6268; border-color: #545b62; opacity: 0.85; }
+        .table-pacientes-minimalista .btn-borrar.btn-accion { background-color: #dc3545; border-color: #dc3545; }
+        .table-pacientes-minimalista .btn-borrar.btn-accion:hover { background-color: #c82333; border-color: #bd2130; opacity: 0.85; }
+
+
+        /* ---- Media Queries para Responsividad ---- */
+        @media (max-width: 767.98px) { /* Móvil */
+            .pacientes-main-container-wrapper {
+                 padding-top: 1rem; padding-bottom: 1rem;
+            }
+            .pacientes-content-card {
+                padding: 0.75rem;
+                margin-left: 0; /* Ocupar todo el ancho del viewport */
+                margin-right: 0;
+                border-radius: 0; /* Sin redondeo en móvil si va de borde a borde */
+                box-shadow: none; /* Sin sombra en móvil si va de borde a borde */
+            }
+            .table-pacientes-minimalista {
+                font-size: 0.9rem; /* Fuente para móvil */
+                border-spacing: 0 6px;
+                min-width: 0; /* Dejar que table-responsive maneje el ancho mínimo basado en contenido */
+            }
+            .table-pacientes-minimalista th,
+            .table-pacientes-minimalista td {
+                padding: 0.8rem 0.5rem;
+            }
+            .bg-black.text-white.p-4.sm\:p-6 { /* Ajustar padding del título principal */
+                 padding: 0.75rem 1rem !important;
+            }
+            .bg-black.text-white h1 { /* Ajustar tamaño del H1 del título */
+                font-size: 1.3rem !important;
+            }
+            /* Formulario de búsqueda en móvil apilado */
+            form.row.g-3 {
+                flex-direction: column;
+            }
+            form.row.g-3 > div {
+                width: 100% !important; flex-basis: auto !important; max-width: 100% !important; margin-bottom: 0.5rem;
+            }
+            form.row.g-3 > div:last-child { margin-bottom: 0; }
+
+            /* Opcional: Hacer botones de acción solo iconos en móvil si es muy estrecho */
+            /*
+            .table-pacientes-minimalista .btn-accion span.texto-boton-accion { display: none; }
+            .table-pacientes-minimalista .btn-accion i { margin-right: 0; }
+            .table-pacientes-minimalista .btn-accion { padding: 0.4rem; }
+            */
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="pacientes-main-container-wrapper">
+    <div class="container"> 
+        <div class="pacientes-content-card">
+
+            <!-- TÍTULO PRINCIPAL CON ESTILO NEGRO -->
+            <div class="bg-black text-white p-4 sm:p-6 rounded-xl shadow-lg mb-6 sm:mb-8">
+                <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-center">Lista de Pacientes</h1>
+            </div>
+
+                <!-- Formulario de búsqueda -->
+                <form method="GET" action="{{ url_for('pacientes.lista_pacientes') }}" class="flex flex-col sm:flex-row items-center gap-3 mb-6 sm:mb-8">
+                    <div class="w-full sm:w-1/2 lg:w-2/5"> 
+                        <input type="text" name="buscar"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm shadow-sm focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
+                            placeholder="Buscar paciente..." value="{{ request.args.get('buscar', '') }}">
+                    </div>
+                    <div class="w-full sm:w-auto">
+                        <button type="submit"
+                                class="w-full sm:w-auto px-6 py-2.5 bg-gray-700 text-white text-sm font-medium rounded-xl hover:bg-gray-800 transition duration-150 ease-in-out shadow-md flex items-center justify-center gap-2">
+                            <i data-lucide="search" class="w-4 h-4"></i> Buscar
+                        </button>
+                    </div>
+                </form>
+            {% if pacientes.items %}
+                <div class="table-responsive">
+                    <table class="table-pacientes-minimalista">
+                        <thead class="thead-custom-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Documento</th>
+                                <th>Teléfono</th>
+                                <th class="columna-acciones-header">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for paciente in pacientes.items %}
+                            <tr>
+                                <td>{{ paciente.id }}</td>
+                                <td>{{ paciente.nombres }}</td>
+                                <td>{{ paciente.apellidos }}</td>
+                                <td>{{ paciente.documento or 'N/A' }}</td>
+                                <td>{{ paciente.telefono or 'N/A' }}</td>
+                                <td class="columna-acciones">
+                                    <a href="{{ url_for('pacientes.mostrar_paciente', id=paciente.id) }}" class="btn btn-accion btn-mostrar" title="Mostrar">
+                                        <i data-lucide="eye"></i><span class="texto-boton-accion"> Ver</span>
+                                    </a>
+                                    <a href="{{ url_for('pacientes.editar_paciente', id=paciente.id) }}" class="btn btn-accion btn-editar" title="Editar">
+                                        <i data-lucide="edit-2"></i><span class="texto-boton-accion"> Editar</span>
+                                    </a>
+                                    <form action="{{ url_for('pacientes.borrar_paciente', id=paciente.id) }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-accion btn-borrar" title="Borrar" onclick="return confirm('¿Está seguro de que desea eliminar este paciente?');">
+                                            <i data-lucide="trash-2"></i><span class="texto-boton-accion"> Borrar</span>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-center mt-4 text-muted">No se encontraron pacientes.</p>
+            {% endif %}
+
+            <!-- Paginación -->
+            {% if pacientes.pages > 1 %}
+            <nav aria-label="Paginación de pacientes" class="mt-4">
+                <ul class="pagination pagination-sm justify-content-center">
+                    {# Primera página #}
+                    <li class="page-item {% if not pacientes.has_prev %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('pacientes.lista_pacientes', page=1, buscar=request.args.get('buscar', '')) }}">««</a>
+                    </li>
+                    {# Página anterior #}
+                    <li class="page-item {% if not pacientes.has_prev %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('pacientes.lista_pacientes', page=pacientes.prev_num if pacientes.has_prev else '#', buscar=request.args.get('buscar', '')) }}">«</a>
+                    </li>
+
+                    {# Números de página #}
+                    {% for page_num in pacientes.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                        {% if page_num %}
+                            {% if pacientes.page == page_num %}
+                                <li class="page-item active" aria-current="page"><span class="page-link">{{ page_num }}</span></li>
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="{{ url_for('pacientes.lista_pacientes', page=page_num, buscar=request.args.get('buscar', '')) }}">{{ page_num }}</a></li>
+                            {% endif %}
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {# Página siguiente #}
+                    <li class="page-item {% if not pacientes.has_next %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('pacientes.lista_pacientes', page=pacientes.next_num if pacientes.has_next else '#', buscar=request.args.get('buscar', '')) }}">»</a>
+                    </li>
+                    {# Última página #}
+                    <li class="page-item {% if not pacientes.has_next %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('pacientes.lista_pacientes', page=pacientes.pages, buscar=request.args.get('buscar', '')) }}">»»</a>
+                    </li>
+                </ul>
+            </nav>
+            <p class="text-center text-muted mt-2"><small>Página {{ pacientes.page }} de {{ pacientes.pages }} (Total: {{ pacientes.total }} pacientes)</small></p>
+            {% endif %}
+
+            <!-- BOTONES INFERIORES CON ESTILO TAILWIND -->
+            <div class="mt-6 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+                <a href="{{ url_for('main.index') }}"
+                   class="w-full sm:w-auto px-6 py-2.5 bg-gray-700 text-white text-sm font-medium rounded-xl hover:bg-gray-800 transition duration-150 ease-in-out shadow-md flex items-center justify-center gap-2">
+                    <i data-lucide="arrow-left-circle" class="w-4 h-4"></i> Volver al inicio
+                </a>
+                <a href="{{ url_for('pacientes.crear_paciente') }}"
+                   class="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition duration-150 ease-in-out shadow-md flex items-center justify-center gap-2">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i> Registrar Paciente
+                </a>
+            </div>
+
+        </div> {# Cierre de .pacientes-content-card #}
+    </div> {# Cierre de .container #}
+</div> {# Cierre de .pacientes-main-container-wrapper #}
+{% endblock %}
+
+{% block scripts %}
+    {# Si usas Lucide, asegúrate que se inicializa. La llamada en base.html suele ser suficiente. #}
+    {# <script> lucide.createIcons(); </script> #}
+{% endblock %}
