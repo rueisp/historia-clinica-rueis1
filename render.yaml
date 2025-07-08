@@ -23,7 +23,7 @@ services:
         sizeGB: 1 # El tamaño del disco persistente (1GB es suficiente y gratis)
 
   # --- Servicio 2: La Base de Datos PostgreSQL ---
-  - type: psql
+  - type: postgres
     name: clinica-db
     plan: free
     postgresMajorVersion: 14
