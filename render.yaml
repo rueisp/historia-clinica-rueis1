@@ -1,6 +1,6 @@
-# Versión 2 del render.yaml, con estructura separada
+# Versión 3 del render.yaml, con la estructura y sintaxis corregidas
 
-# Define los servicios de tu aplicación
+# Primero, definimos todos los servicios que necesita nuestra aplicación
 services:
   # --- Servicio 1: La Aplicación Web (Flask/Gunicorn) ---
   - type: web
@@ -8,7 +8,13 @@ services:
     env: python
     plan: free
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn 'clinica:create_app()'" # Añadidas comillas para robustez
+    startCommand: "gunicorn 'clinica:create_app()'"
+    # Conectamos el servicio web al disco persistente definido más abajo
+    disk:
+      name: data-disk
+      mountPath: /var/data/clinica
+      sizeGB: 1
+    # Definimos las variables de entorno para este servicio
     envVars:
       - key: SECRET_KEY
         generateValue: true
@@ -20,17 +26,11 @@ services:
         value: clinica
       - key: FLASK_DEBUG
         value: "0"
-    disks:
-      - name: data-disk
-        mountPath: /var/data/clinica
-        sizeGB: 1
 
-# Define las bases de datos de tu aplicación
+# Segundo, definimos las bases de datos
 databases:
   # --- Servicio 2: La Base de Datos PostgreSQL ---
   - name: clinica-db
     plan: free
-    databaseName: clinica_db_prod # Nombre interno de la base de datos
-    user: clinica_user          # Nombre de usuario para la base de datos
     postgresMajorVersion: 14
     region: ohio
