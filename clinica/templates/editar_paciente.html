@@ -130,7 +130,7 @@
                     <div class="col">
                         <label>Imágen 1</label><br>
                         {% if paciente.imagen_1 and paciente.imagen_1.strip() %}
-                            <img src="{{ url_for('static', filename=paciente.imagen_1) }}" alt="Imagen 1" class="img-fluid mb-2" style="max-height: 200px;">
+                            <img src="{{ url_for('main.uploaded_file', subpath=paciente.imagen_1) }}" alt="Imagen 1" class="img-fluid mb-2" style="max-height: 200px;">
                             <div class="form-check mt-2">
                                 <input class="form-check-input" type="checkbox" name="eliminar_imagen_1" id="eliminar_imagen_1">
                                 <label class="form-check-label" for="eliminar_imagen_1">
@@ -146,7 +146,7 @@
                     <div class="col">
                         <label>Imágen 2</label><br>
                         {% if paciente.imagen_2 and paciente.imagen_2.strip() %}
-                            <img src="{{ url_for('static', filename=paciente.imagen_2) }}" alt="Imagen 2" class="img-fluid mb-2" style="max-height: 200px;">
+                            <img src="{{ url_for('main.uploaded_file', subpath=paciente.imagen_2) }}" alt="Imagen 2" class="img-fluid mb-2" style="max-height: 200px;">
                             <div class="form-check mt-2">
                                 <input class="form-check-input" type="checkbox" name="eliminar_imagen_2" id="eliminar_imagen_2">
                                 <label class="form-check-label" for="eliminar_imagen_2">
@@ -167,7 +167,7 @@
                 {% if paciente.dentigrama_canvas %}
                     <div class="mb-3">
                         <label>Dentigrama Actual</label><br>
-                        <img id="dentigrama_img_src" src="{{ url_for('static', filename=paciente.dentigrama_canvas) }}" alt="Dentigrama actual" class="img-fluid" style="max-height: 300px;">
+                        <img id="dentigrama_img_src" src="{{ url_for('main.uploaded_file', subpath=paciente.dentigrama_canvas) }}" alt="Dentigrama actual" class="img-fluid" style="max-height: 300px;">
                         <!-- Opcional: Checkbox para eliminar dentigrama -->
                         <!--
                         <div class="form-check mt-2">
@@ -191,12 +191,15 @@
                 <br>
                 <div>
                     <canvas id="dentigrama_canvas"
-                            data-dentigrama-url="{{ url_for('static', filename=paciente.dentigrama_canvas) if paciente.dentigrama_canvas else url_for('static', filename='img/dentigrama1.png') }}">
+                            data-dentigrama-url="{{ url_for('main.uploaded_file', subpath=paciente.dentigrama_canvas) if paciente.dentigrama_canvas else url_for('static', filename='img/dentigrama1.png') }}">
                     </canvas>
                     
                     <!-- Si hay un dentigrama guardado, precargar la imagen en el canvas -->
                     {% if paciente.dentigrama_canvas %}
-                        <img id="dentigrama_img_src" src="{{ url_for('static', filename=paciente.dentigrama_canvas) }}" alt="Dentigrama actual" style="display: none;">
+                        <img id="dentigrama_img_src" 
+                            src="{{ url_for('main.uploaded_file', subpath=paciente.dentigrama_canvas) if paciente.dentigrama_canvas else url_for('static', filename='img/dentigrama1.png') }}" 
+                            alt="Dentigrama actual" 
+                            style="display: none;">                    
                     {% endif %}
                     
                     <br>

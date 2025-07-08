@@ -263,9 +263,9 @@
             <div class="card-custom">
                 <h3><i data-lucide="image" class="card-icon"></i>Galería</h3>
                 <div class="gallery-grid">
-                    {% if paciente.imagen_1 %}<div class="gallery-item" data-bs-toggle="modal" data-bs-target="#modalImagen1"><img src="{{ url_for('static', filename=paciente.imagen_1) }}" alt="Imagen 1"><h5>Imagen 1</h5></div>{% endif %}
-                    {% if paciente.imagen_2 %}<div class="gallery-item" data-bs-toggle="modal" data-bs-target="#modalImagen2"><img src="{{ url_for('static', filename=paciente.imagen_2) }}" alt="Imagen 2"><h5>Imagen 2</h5></div>{% endif %}
-                    {% if paciente.dentigrama_canvas %}<div class="gallery-item" data-bs-toggle="modal" data-bs-target="#modalDentigrama"><img src="{{ url_for('static', filename=paciente.dentigrama_canvas) }}" alt="Dentigrama"><h5>Dentigrama</h5></div>{% endif %}
+                    {% if paciente.imagen_1 %}<div class="gallery-item" data-bs-toggle="modal" data-bs-target="#modalImagen1"><img src="{{ url_for('main.uploaded_file', subpath=paciente.imagen_1) }}" alt="Imagen 1"><h5>Imagen 1</h5></div>{% endif %}
+                    {% if paciente.imagen_2 %}<div class="gallery-item" data-bs-toggle="modal" data-bs-target="#modalImagen2"><img src="{{ url_for('main.uploaded_file', subpath=paciente.imagen_2) }}" alt="Imagen 2"><h5>Imagen 2</h5></div>{% endif %}
+                    {% if paciente.dentigrama_canvas %}<div class="gallery-item" data-bs-toggle="modal" data-bs-target="#modalDentigrama"><img src="{{ url_for('main.uploaded_file', subpath=paciente.dentigrama_canvas) }}" alt="Dentigrama"><h5>Dentigrama</h5></div>{% endif %}
                 </div>
             </div>
             {% endif %}
@@ -316,8 +316,8 @@
 </div>
 
 <!-- Modales para las imágenes (sin cambios) -->
-{% if paciente.imagen_1 %}<div class="modal fade" id="modalImagen1" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-body"><img src="{{ url_for('static', filename=paciente.imagen_1) }}" class="img-fluid" alt="Imagen 1"></div></div></div></div>{% endif %}
-{% if paciente.imagen_2 %}<div class="modal fade" id="modalImagen2" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-body"><img src="{{ url_for('static', filename=paciente.imagen_2) }}" class="img-fluid" alt="Imagen 2"></div></div></div></div>{% endif %}
-{% if paciente.dentigrama_canvas %}<div class="modal fade" id="modalDentigrama" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-body"><img src="{{ url_for('static', filename=paciente.dentigrama_canvas) }}" class="img-fluid" alt="Dentigrama"></div></div></div></div>{% endif %}
+{% if paciente.imagen_1 %}<div class="modal fade" id="modalImagen1" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-body"><img src="{{ url_for('main.uploaded_file', subpath=paciente.imagen_1) }}" class="img-fluid" alt="Imagen 1"></div></div></div></div>{% endif %}
+{% if paciente.imagen_2 %}<div class="modal fade" id="modalImagen2" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-body"><img src="{{ url_for('main.uploaded_file', subpath=paciente.imagen_2) }}" class="img-fluid" alt="Imagen 2"></div></div></div></div>{% endif %}
+{% if paciente.dentigrama_canvas %}<div class="modal fade" id="modalDentigrama" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-body"><img src="{{ url_for('main.uploaded_file', subpath=paciente.dentigrama_canvas) }}" class="img-fluid" alt="Dentigrama"></div></div></div></div>{% endif %}
 
 {% endblock %}

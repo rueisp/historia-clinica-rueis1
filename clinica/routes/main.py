@@ -1,16 +1,14 @@
 # clinica/routes/main.py
 
 from flask import (
-    Blueprint, render_template, redirect, url_for, flash, request, current_app
+    Blueprint, render_template, redirect, url_for, flash, request, current_app, send_from_directory
 )
 from flask_login import login_user, logout_user, login_required, current_user
-
-# Importaciones del proyecto
 from ..models import db, Usuario, AuditLog # Asegúrate de que 'db' esté importado
 from ..extensions import db # Esta línea es redundante si ya importas db desde models, pero no hace daño
 from ..utils import get_index_panel_data
+import os
 
-# Creamos el Blueprint
 main_bp = Blueprint('main', __name__) 
 
 # --- Rutas Principales ---
@@ -194,3 +192,26 @@ def perfil():
 
     # Para el método GET, simplemente muestra la plantilla con los datos del usuario
     return render_template('perfil.html', usuario=usuario_a_editar)
+
+@main_bp.route('/uploads/<path:subpath>')
+def uploaded_file(subpath):
+    # Construimos la ruta base de almacenamiento
+    storage_dir = os.path.join('/var/data/clinica', 'uploads')
+    
+    # Si no estamos en Render, usamos la carpeta static local
+    if not os.path.exists('/var/data/clinica'):
+        storage_dir = os.path.join(current_app.root_path, 'static', 'uploads')
+        
+    # La ruta completa al archivo solicitado
+    full_path = os.path.join(storage_dir, subpath)
+
+    # Verificamos que el archivo realmente exista para evitar errores
+    if not os.path.exists(full_path):
+        return "Archivo no encontrado", 404
+
+    # Dividimos la ruta para obtener el directorio y el nombre del archivo
+    directory = os.path.dirname(full_path)
+    filename = os.path.basename(full_path)
+    
+    # Usamos send_from_directory, que es la forma segura de servir archivos
+    return send_from_directory(directory, filename)

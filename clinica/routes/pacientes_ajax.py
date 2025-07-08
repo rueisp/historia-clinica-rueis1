@@ -109,9 +109,9 @@ def obtener_paciente_ajax(id):
         'proxima_cita_paciente_info': proxima_cita_paciente_str,
         'motivo_frecuente_info': motivo_frecuente_str,
         # --- URLs de imágenes (si las tienes en el modelo Paciente) ---
-        'imagen_1_url': url_for('static', filename=paciente.imagen_1, _external=False) if paciente.imagen_1 else None,
-        'imagen_2_url': url_for('static', filename=paciente.imagen_2, _external=False) if paciente.imagen_2 else None,
-        'dentigrama_url': url_for('static', filename=paciente.dentigrama_canvas, _external=False) if paciente.dentigrama_canvas else None,
+        'imagen_1_url': url_for('main.uploaded_file', subpath=paciente.imagen_1, _external=False) if paciente.imagen_1 else None,
+        'imagen_2_url': url_for('main.uploaded_file', subpath=paciente.imagen_2, _external=False) if paciente.imagen_2 else None,
+        'dentigrama_url': url_for('main.uploaded_file', subpath=paciente.dentigrama_canvas, _external=False) if paciente.dentigrama_canvas else None,
     }
     return jsonify(paciente_data)
 # --- FIN RUTA MODIFICADA ---
