@@ -1,19 +1,19 @@
 # clinica/routes/papelera.py
-
 import os
+import cloudinary.uploader
 from flask import (
     Blueprint, render_template, request, redirect, url_for, flash, current_app
 )
 from flask_login import login_required, current_user
 from sqlalchemy.orm import joinedload
-
-# Importaciones relativas desde dentro del paquete 'clinica'
+from ..utils import extract_public_id_from_url
 from ..extensions import db
 from ..models import Paciente, Cita, Evolucion, AuditLog
-from ..utils import eliminar_imagen # Suponiendo que moviste eliminar_imagen a utils.py
+try:
+    from . import utils
+except ImportError:
+    from .. import utils
 
-# --- Definición del Blueprint ---
-# El prefijo de la URL se definirá al registrar el blueprint en __init__.py
 papelera_bp = Blueprint('papelera', __name__, template_folder='../templates')
 
 
@@ -117,7 +117,6 @@ def restaurar_elemento():
         
     return redirect(action_source or url_for('papelera.ver_papelera'))
 
-
 @papelera_bp.route('/eliminar-permanente', methods=['POST'])
 @login_required
 def eliminar_permanentemente():
@@ -139,9 +138,7 @@ def eliminar_permanentemente():
     
     query = model_class.query.filter_by(id=target_id, is_deleted=True)
 
-    # Añadimos el filtro de seguridad si el usuario no es admin
     if not current_user.is_admin:
-        # Asumiendo que todos los modelos relevantes tienen 'odontologo_id'
         if hasattr(model_class, 'odontologo_id'):
             query = query.filter_by(odontologo_id=current_user.id)
 
@@ -153,16 +150,40 @@ def eliminar_permanentemente():
     try:
         log_descripcion_base = f"{target_model_str} (ID: {target_id})"
         
-        # Lógica para eliminar archivos y dependencias (si aplica)
+        # --- 👇▼▼▼ INICIO DEL BLOQUE MODIFICADO ▼▼▼👇 ---
         if target_model_str == "Paciente":
-            log_descripcion_base = f"Paciente '{objeto_a_eliminar.nombres} {objeto_a_eliminar.apellidos}' (ID: {target_id})"
-            # Eliminar archivos físicos asociados al paciente
-            eliminar_imagen(objeto_a_eliminar.dentigrama_canvas)
-            eliminar_imagen(objeto_a_eliminar.imagen_1)
-            eliminar_imagen(objeto_a_eliminar.imagen_2)
-            # Eliminar en cascada las evoluciones y citas asociadas
+            # --- INICIO DE LA DEPURACIÓN ---
+            print("=============================================")
+            print(f"INICIANDO BORRADO PERMANENTE DEL PACIENTE ID: {objeto_a_eliminar.id}")
+            print(f"URL del Dentigrama: {objeto_a_eliminar.dentigrama_url}")
+            print(f"URL de Imagen 1: {objeto_a_eliminar.imagen_1_url}")
+            print(f"URL de Imagen 2: {objeto_a_eliminar.imagen_2_url}")
+            print("---------------------------------------------")
+            # --- FIN DE LA DEPURACIÓN ---
+
+            # --- NUEVA LÓGICA: Eliminar imágenes de Cloudinary ---
+            urls_a_borrar = [
+                objeto_a_eliminar.dentigrama_url,
+                objeto_a_eliminar.imagen_1_url,
+                objeto_a_eliminar.imagen_2_url
+            ]
+
+            for url in urls_a_borrar:
+                if url:
+                    public_id = extract_public_id_from_url(url)
+                    if public_id:
+                        try:
+                            # Le pedimos a Cloudinary que destruya la imagen
+                            cloudinary.uploader.destroy(public_id)
+                            current_app.logger.info(f"Éxito al eliminar de Cloudinary: {public_id}")
+                        except Exception as e_cloud:
+                            # Si falla, solo lo registramos, pero no detenemos el proceso
+                            current_app.logger.error(f"Fallo al eliminar de Cloudinary {public_id}: {e_cloud}")
+            
+            # Eliminar en cascada las evoluciones y citas asociadas (esta parte estaba bien)
             Evolucion.query.filter_by(paciente_id=target_id).delete()
             Cita.query.filter_by(paciente_id=target_id).delete()
+        # --- ▲▲▲ FIN DEL BLOQUE MODIFICADO ▲▲▲ ---
 
         # Eliminar el objeto de la DB (Hard Delete)
         db.session.delete(objeto_a_eliminar)

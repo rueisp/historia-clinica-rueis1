@@ -1,0 +1,185 @@
+
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .container-custom {
+        max-width: 1600px; /* Ancho extendido para 4 columnas */
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    /* --- ENCABEZADO DEL PERFIL --- */
+    .profile-header {
+        background-color: #000;
+        color: white;
+        border-radius: 20px;
+        padding: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    .profile-header .info h1 {
+        margin: 0 0 5px 0;
+        font-size: 28px;
+        font-weight: 600;
+    }
+    .profile-header .info p {
+        margin: 0;
+        opacity: 0.8;
+    }
+    .profile-header .actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    /* --- BOTONES PERSONALIZADOS --- */
+    .btn-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 15px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
+    }
+    .btn-custom .btn-icon { margin-right: 8px; }
+
+    .btn-primary-custom { background-color: #111827; color: white; }
+    .btn-primary-custom:hover { background-color: #1D4ED8; transform: translateY(-2px); }
+    .btn-secondary-custom { background-color: #6c757d; color: white; }
+    .btn-secondary-custom:hover { background-color: #5a6268; }
+    .btn-success-custom { background-color: #16a34a; color: white; }
+    .btn-success-custom:hover { background-color: #15803d; }
+    .btn-info-custom { background-color: #0284c7; color: white; }
+    .btn-info-custom:hover { background-color: #0369a1; }
+
+    /* --- LAYOUT DE 4 COLUMNAS --- */
+    .profile-layout {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+    }
+
+    /* --- TARJETA MODULAR --- */
+    .card-custom {
+        background-color: #ffffff;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+        margin-bottom: 25px; /* Espacio entre tarjetas en la misma columna */
+    }
+    .card-custom h3 {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 20px 0;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        align-items: center;
+    }
+    .card-custom h3 .card-icon { margin-right: 12px; color: #4b5563; }
+
+    /* --- ESTILOS DE DATOS DENTRO DE LAS TARJETAS --- */
+    .data-grid {
+        display: grid;
+        grid-template-columns: 1fr; /* Por defecto, una columna para mejor distribución interna */
+        gap: 18px;
+    }
+    .data-item .label {
+        display: block;
+        font-weight: 500;
+        color: #6c757d;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+    .data-item .value {
+        color: #111827;
+        font-weight: 500;
+        font-size: 15px;
+    }
+    .data-item .value.text-area {
+        white-space: pre-wrap;
+        font-size: 14px;
+        line-height: 1.6;
+        background-color: #f8f9fa;
+        padding: 12px;
+        border-radius: 8px;
+        display: block;
+        color: #343a40;
+    }
+
+    /* --- ESTILOS DE GALERÍA, EVOLUCIÓN, ETC. --- */
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        text-align: center;
+    }
+    .gallery-item img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .gallery-item img:hover { transform: scale(1.05); }
+    .gallery-item h5 { font-size: 14px; margin-top: 10px; font-weight: 500; }
+    
+    .evolucion-list .evolucion-item {
+        position: relative;
+        padding-left: 25px;
+        padding-bottom: 20px;
+        border-left: 2px solid #e9ecef;
+    }
+    .evolucion-list .evolucion-item:last-child { border-left: 2px solid transparent; padding-bottom: 0; }
+    .evolucion-list .evolucion-item::before {
+        content: ''; position: absolute; left: -7px; top: 5px; width: 12px; height: 12px;
+        border-radius: 50%; background-color: #6c757d; border: 2px solid #fff;
+    }
+    .evolucion-list .evolucion-item:first-child::before { background-color: #0d6efd; }
+    .evolucion-date { font-weight: 500; color: #343a40; font-size: 14px; margin-bottom: 5px; }
+    .evolucion-desc { color: #495057; font-size: 15px; }
+    .evolucion-form textarea { border-radius: 12px; border-color: #dee2e6; }
+    
+    .modal-content { border-radius: 20px; }
+    .modal-body img { border-radius: 12px; }
+
+    /* --- LÓGICA RESPONSIVE --- */
+    @media (max-width: 1400px) {
+        .profile-layout { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+        .profile-layout { grid-template-columns: 1fr; }
+        .profile-header { flex-direction: column; gap: 20px; text-align: center; }
+    }
+
+/* Hacemos que el cuerpo del modal no tenga padding */
+#modalDentigrama .modal-body {
+    padding: 0;
+}
+
+/* El nuevo contenedor dentro del modal */
+.dentigrama-modal-content {
+    position: relative;
+    width: 800px;  /* Ancho fijo */
+    height: 400px; /* Alto fijo */
+    margin: auto;  /* Centrar */
+}
+
+/* Las dos imágenes (fondo y trazos) dentro del contenedor */
+.dentigrama-modal-content .dentigrama-fondo,
+.dentigrama-modal-content .dentigrama-trazos {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}

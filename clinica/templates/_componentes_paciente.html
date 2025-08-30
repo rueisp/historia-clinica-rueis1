@@ -1,0 +1,36 @@
+<!-- Archivo: _componentes_paciente.html (Versión Mejorada) -->
+
+{% macro render_campo(label, name, paciente, editable=True, type='text') %}
+    {% if editable %}
+        <!-- MODO EDICIÓN -->
+        <div class="col-md-3">
+            <label for="{{ name }}" class="form-label">{{ label }}</label>
+            {# 👇 ESTA LÍNEA ES MÁS INTELIGENTE AHORA 👇 #}
+            <input type="{{ type }}" class="form-control" id="{{ name }}" name="{{ name }}" value="{{ request.form[name] or paciente[name] or '' }}">
+        </div>
+    {% else %}
+        <!-- MODO SOLO LECTURA -->
+        <div class="data-item">
+            <span class="label">{{ label }}</span>
+            <span class="value">{{ paciente[name] or 'N/A' }}</span>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+
+{% macro render_campo_textarea(label, name, paciente, editable=True) %}
+    {% if editable %}
+        <!-- MODO EDICIÓN -->
+        <div class="col-md-6 mb-3">
+            <label for="{{ name }}" class="form-label">{{ label }}</label>
+            {# 👇 ESTA LÍNEA ES MÁS INTELIGENTE AHORA 👇 #}
+            <textarea class="form-control" id="{{ name }}" name="{{ name }}" rows="2">{{ request.form[name] or paciente[name] or '' }}</textarea>
+        </div>
+    {% else %}
+        <!-- MODO SOLO LECTURA -->
+        <div class="data-item">
+            <span class="label">{{ label }}</span>
+            <span class="value text-area">{{ paciente[name] or 'No especificado' }}</span>
+        </div>
+    {% endif %}
+{% endmacro %}

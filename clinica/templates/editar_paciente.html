@@ -1,362 +1,92 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Paciente</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{% extends "base.html" %}
 
-        <!-- ▼▼▼ INICIO DEL ÚNICO CAMBIO: Estilo para el nuevo encabezado ▼▼▼ -->
-    <style>
-        .edit-header {
-            background-color: #000;
-            color: white;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        .edit-header h1 {
-            margin: 0 0 5px 0;
-            font-size: 28px;
-            font-weight: 600;
-        }
-        .edit-header p {
-            margin: 0;
-            opacity: 0.8;
-            font-size: 1.1rem;
-        }
-    </style>
-    <!-- ▲▲▲ FIN DEL ÚNICO CAMBIO ▲▲▲ -->
+{% from '_componentes_paciente.html' import render_campo, render_campo_textarea %}
 
-</head>
-<body>
-    <div class="container mt-5">
+{% block title %}Editar Paciente - {{ paciente.nombres }} {{ paciente.apellidos }}{% endblock %}
 
-        <!-- ▼▼▼ INICIO DEL ÚNICO CAMBIO: Encabezado reemplazado ▼▼▼ -->
-        <div class="edit-header">
-            <h1>Editando Perfil</h1>
-            <p>Paciente: <strong>{{ paciente.nombres }} {{ paciente.apellidos }}</strong></p>
-        </div>
-        <!-- ▲▲▲ FIN DEL ÚNICO CAMBIO ▲▲▲ -->
+{% block head_extra %}
+{% endblock %}
 
-</head>
-<body>
-    <div class="container mt-5">
-        <h2 class="text-center">Editar Paciente</h2>
-        <form action="{{ url_for('pacientes.editar_paciente', id=paciente.id) }}" method="POST" enctype="multipart/form-data" class="mt-4">
-            <fieldset class="border p-3 mb-3">
-                <legend class="w-auto">Datos Personales</legend>
-                <div class="row mb-2">
-                    <div class="col"><label>Nombres</label><input type="text" name="nombres" class="form-control" value="{{ form_data.get('nombres', '') }}"></div>
-                    <div class="col"><label>Apellidos</label><input type="text" name="apellidos" class="form-control" value="{{ form_data.get('apellidos', '') }}"></div>
-                    <div class="col"><label>Tipo de Documento</label><input type="text" name="tipo_documento" class="form-control" value="{{ form_data.get('tipo_documento', '') }}"></div>
-                    <div class="col"><label>Documento</label><input type="text" name="documento" class="form-control" value="{{ form_data.get('documento', '') }}"></div>
-                </div>
-                <div class="row mb-2">    
-                    <div class="col"><label>Fecha de Nacimiento</label><input type="date" name="fecha_nacimiento" class="form-control" value="{{ form_data.get('fecha_nacimiento', '') }}"></div>
-                    <div class="col"><label>Edad</label><input type="number" name="edad" class="form-control" value="{{ form_data.get('edad', '') }}"></div>
-                    <div class="col"><label>Email</label><input type="email" name="email" class="form-control" value="{{ form_data.get('email', '') }}"></div>
-                    <div class="col"><label>Teléfono</label><input type="text" name="telefono" class="form-control" value="{{ form_data.get('telefono', '') }}"></div>
-                </div>
-                <div class="row mb-2">    
-                    <div class="col"><label>Género</label><input type="text" name="genero" class="form-control" value="{{ form_data.get('genero', '') }}"></div>
-                    <div class="col"><label>Estado Civil</label><input type="text" name="estado_civil" class="form-control" value="{{ form_data.get('estado_civil', '') }}"></div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col"><label>Dirección</label><input type="text" name="direccion" class="form-control" value="{{ form_data.get('direccion', '') }}"></div>
-                    <div class="col"><label>Barrio</label><input type="text" name="barrio" class="form-control" value="{{ form_data.get('barrio', '') }}"></div>
-                    <div class="col"><label>Municipio</label><input type="text" name="municipio" class="form-control" value="{{ form_data.get('municipio', '') }}"></div>
-                    <div class="col"><label>Departamento</label><input type="text" name="departamento" class="form-control" value="{{ form_data.get('departamento', '') }}"></div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col"><label>Aseguradora</label><input type="text" name="aseguradora" class="form-control" value="{{ form_data.get('aseguradora', '') }}"></div>
-                    <div class="col"><label>Tipo de Vinculación</label><input type="text" name="tipo_vinculacion" class="form-control" value="{{ form_data.get('tipo_vinculacion', '') }}"></div>
-                    <div class="col"><label>Ocupación</label><input type="text" name="ocupacion" class="form-control" value="{{ form_data.get('ocupacion', '') }}"></div>
-                    <div class="col"><label>Referido por</label><input type="text" name="referido_por" class="form-control" value="{{ form_data.get('referido_por', '') }}"></div>
-                </div>
-            </fieldset>
-
-            <fieldset class="border p-3 mb-3">
-                <legend class="w-auto">Datos del Responsable</legend>
-                <div class="row mb-2">
-                    <div class="col"><label>Nombre del Responsable</label><input type="text" name="nombre_responsable" class="form-control" value="{{ form_data.get('nombre_responsable', '') }}"></div>
-                    <div class="col"><label>Teléfono del Responsable</label><input type="text" name="telefono_responsable" class="form-control" value="{{ form_data.get('telefono_responsable', '') }}"></div>
-                    <div class="col"><label>Parentesco</label><input type="text" name="parentesco" class="form-control" value="{{ form_data.get('parentesco', '') }}"></div>
-                </div>
-            </fieldset>
-
-            <fieldset class="border p-3 mb-4">
-                <legend class="w-auto">Antecedentes Personales</legend>
-                <div class="row mb-2">
-                    <div class="col"><label>Motivo de Consulta</label><textarea name="motivo_consulta" class="form-control">{{ form_data.get('motivo_consulta', '') }}</textarea></div>
-                    <div class="col"><label>Enfermedad Actual</label><textarea name="enfermedad_actual" class="form-control">{{ form_data.get('enfermedad_actual', '') }}</textarea></div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col"><label>Antecedentes Personales</label><textarea name="antecedentes_personales" class="form-control">{{ form_data.get('antecedentes_personales', '') }}</textarea></div>
-                    <div class="col"><label>Antecedentes Familiares</label><textarea name="antecedentes_familiares" class="form-control">{{ form_data.get('antecedentes_familiares', '') }}</textarea></div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col"><label>Antecedentes Quirúrgicos</label><textarea name="antecedentes_quirurgicos" class="form-control">{{ form_data.get('antecedentes_quirurgicos', '') }}</textarea></div>
-                    <div class="col"><label>Antecedentes Hemorrágicos</label><textarea name="antecedentes_hemorragicos" class="form-control">{{ form_data.get('antecedentes_hemorragicos', '') }}</textarea></div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col"><label>Farmacológicos</label><textarea name="farmacologicos" class="form-control">{{ form_data.get('farmacologicos', '') }}</textarea></div>
-                    <div class="col"><label>Reacción a Medicamentos</label><textarea name="reaccion_medicamentos" class="form-control">{{ form_data.get('reaccion_medicamentos', '') }}</textarea></div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col"><label>Alergias</label><textarea name="alergias" class="form-control">{{ form_data.get('alergias', '') }}</textarea></div>
-                    <div class="col"><label>Hábitos</label><textarea name="habitos" class="form-control">{{ form_data.get('habitos', '') }}</textarea></div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col"><label>Cepillado</label><textarea name="cepillado" class="form-control">{{ form_data.get('cepillado', '') }}</textarea></div>
-                    <div class="col"><label>Examen Físico</label><textarea name="examen_fisico" class="form-control">{{ form_data.get('examen_fisico', '') }}</textarea></div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col"><label>Última Visita al Odontólogo</label><input type="date" name="ultima_visita_odontologo" class="form-control" value="{{ form_data.get('ultima_visita_odontologo', '') }}"></div>
-                    <div class="col"><label>Plan de Tratamiento</label><textarea name="plan_tratamiento" class="form-control">{{ form_data.get('plan_tratamiento', '') }}</textarea></div>
-                </div>
-                                <!-- ▼▼▼ NUEVO CAMPO 'OBSERVACIONES' ▼▼▼ -->
-                <div class="mb-3">
-                    <label for="observaciones" class="form-label">Observaciones</label>
-                    <textarea class="form-control" id="observaciones" name="observaciones" rows="3">{{ form_data.get('observaciones', '') }}</textarea>
-                </div>
-                <!-- ▲▲▲ FIN NUEVO CAMPO ▲▲▲ -->
-                </fieldset>
-
-            <fieldset class="border p-3 mb-4">
-                <legend class="w-auto">Imágenes</legend>
-                <div class="row mb-3">
-                    <div class="col">
-                        <label>Imágen 1</label><br>
-                        {% if paciente.imagen_1 and paciente.imagen_1.strip() %}
-                            <img src="{{ url_for('static', filename=paciente.imagen_1) }}" alt="Imagen 1" class="img-fluid mb-2" style="max-height: 200px;">
-                            <div class="form-check mt-2">
-                                <input class="form-check-input" type="checkbox" name="eliminar_imagen_1" id="eliminar_imagen_1">
-                                <label class="form-check-label" for="eliminar_imagen_1">
-                                    Eliminar imagen 1 actual
-                                </label>
-                            </div>
-                        {% else %}
-                            <p>No hay imágen subida.</p>
-                        {% endif %}
-                        <input type="file" name="imagen_1" class="form-control mt-2" accept="image/*">
-                    </div>
-            
-                    <div class="col">
-                        <label>Imágen 2</label><br>
-                        {% if paciente.imagen_2 and paciente.imagen_2.strip() %}
-                            <img src="{{ url_for('static', filename=paciente.imagen_2) }}" alt="Imagen 2" class="img-fluid mb-2" style="max-height: 200px;">
-                            <div class="form-check mt-2">
-                                <input class="form-check-input" type="checkbox" name="eliminar_imagen_2" id="eliminar_imagen_2">
-                                <label class="form-check-label" for="eliminar_imagen_2">
-                                    Eliminar imagen 2 actual
-                                </label>
-                            </div>
-                        {% else %}
-                            <p>No hay imágen subida.</p>
-                        {% endif %}
-                        <input type="file" name="imagen_2" class="form-control mt-2" accept="image/*">
-                    </div>
-                </div>
-            </fieldset>
-
-            
-            <fieldset class="border p-3 mb-4">
-                <legend class="w-auto">Dentigrama</legend>
-                {% if paciente.dentigrama_canvas %}
-                    <div class="mb-3">
-                        <label>Dentigrama Actual</label><br>
-                        <img id="dentigrama_img_src" src="{{ url_for('static', filename=paciente.dentigrama_canvas) }}" alt="Dentigrama actual" class="img-fluid" style="max-height: 300px;">
-                        <!-- Opcional: Checkbox para eliminar dentigrama -->
-                        <!--
-                        <div class="form-check mt-2">
-                            <input class="form-check-input" type="checkbox" name="eliminar_dentigrama" id="eliminar_dentigrama">
-                            <label class="form-check-label" for="eliminar_dentigrama">
-                                Eliminar dentigrama actual
-                            </label>
-                        </div>
-                        -->
-                    </div>
-                {% else %}
-                    <p>No hay dentigrama guardado.</p>
-                {% endif %}
-                
-                <label>Subir nuevo dentigrama (imagen PNG)</label>
-                <input type="file" name="dentigrama_canvas" class="form-control mt-2" accept="image/png">
-            </fieldset>
-            
-            <fieldset class="border p-3 mt-4 shadow-sm rounded-3">
-                <legend>Dentigrama (Canvas)</legend>
-                <br>
-                <div>
-                    <canvas id="dentigrama_canvas"
-                            data-dentigrama-url="{{ url_for('static', filename=paciente.dentigrama_canvas) if paciente.dentigrama_canvas else url_for('static', filename='img/dentigrama1.png') }}">
-                    </canvas>
-                    
-                    <!-- Si hay un dentigrama guardado, precargar la imagen en el canvas -->
-                    {% if paciente.dentigrama_canvas %}
-                        <img id="dentigrama_img_src" src="{{ url_for('static', filename=paciente.dentigrama_canvas) }}" alt="Dentigrama actual" style="display: none;">
-                    {% endif %}
-                    
-                    <br>
-                    <!-- Botones para cambiar el color del pincel -->
-                    <button type="button" onclick="cambiarColor('red')">🔴 Rojo</button>
-                    <button type="button" onclick="cambiarColor('blue')">🔵 Azul</button>
-                    <button type="button" onclick="cambiarColor('black')">⚫ Negro</button>
-                    <button type="button" onclick="activarCheck()">✔️ Activar Check</button>
-                    <button type="button" onclick="deshacer()">↩️ Deshacer</button>
-                    <button type="button" onclick="guardarImagen()">💾 Guardar</button>
-                </div>
-                <br>
-                <!-- Campo oculto para el dentigrama canvas base64 -->
-                <input type="hidden" name="dentigrama_canvas" id="dentigrama_canvas_input">
-            </fieldset>
-            
-            <script>
-                window.onload = function() {
-                    // Solo si hay dentigrama cargado
-                    var imgElement = document.getElementById('dentigrama_img_src');
-                    var canvas = document.getElementById('dentigrama_canvas');
-                    var ctx = canvas.getContext('2d');
-            
-                    if (imgElement) {
-                        imgElement.onload = function() {
-                            // Configura las dimensiones del canvas para que coincidan con la imagen
-                            canvas.width = imgElement.width;
-                            canvas.height = imgElement.height;
-                            // Dibuja la imagen en el canvas
-                            ctx.drawImage(imgElement, 0, 0);
-                        };
-                    }
-                };
-            </script>
-            
-            
-            <fieldset class="border p-3 mb-4">
-                <legend class="w-auto">Evolución del Paciente</legend>
-                {% for evolucion in paciente.evoluciones %}
-                <div class="mb-3 p-3 border rounded bg-light">
-                    <div class="d-flex justify-content-between">
-                        <strong>{{ evolucion.fecha.strftime('%Y-%m-%d %H:%M') }}</strong>
-                        <div>
-                            <a href="{{ url_for('evoluciones.editar_evolucion', id=evolucion.id) }}" class="btn btn-sm btn-outline-primary me-2">
-                                <i class="bi bi-pencil"></i> Editar
-                            </a>
-
-                        </div>
-                    </div>
-                    <p class="mt-2 mb-0">{{ evolucion.descripcion }}</p>
-                </div>
-                {% else %}
-                <p>No hay evoluciones registradas.</p>
-                {% endfor %}
-
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-            </fieldset>
-
-            <div class="mt-5 mb-5 d-flex gap-3 justify-content-center">
-                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                <a href="{{ url_for('pacientes.mostrar_paciente', id=paciente.id) }}" class="btn btn-secondary">Cancelar</a>
-            </div>
-        </form>
+{% block content %}
+<div class="container mt-4">
+    <div class="edit-header text-center mb-4">
+        <h1>Editando Perfil</h1>
+        <p>Paciente: <strong>{{ paciente.nombres }} {{ paciente.apellidos }}</strong> (ID: {{ paciente.id }})</p>
     </div>
 
-    <script>
-        let canvas = document.getElementById('dentigrama_canvas');
-        let ctx = canvas.getContext('2d');
-        let painting = false;
-        let color = 'black';
-        let grosorPincel = 3; // <--- AÑADE ESTA VARIABLE
-        let dibujandoCheck = false; // Variable para activar/desactivar la herramienta de "check"
-    
-        canvas.width = 800;
-        canvas.height = 300;
-    
-        // Precargar imagen del dentigrama si existe
-        const dentigramaImg = document.getElementById('dentigrama_img_src');
-        if (dentigramaImg) {
-            const img = new Image();
-            img.src = dentigramaImg.src;
-            img.onload = function () {
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            };
-        }
-    
-        function empezarDibujo(e) {
-            painting = true;
-            dibujar(e);
-        }
-    
-        function finalizarDibujo() {
-            painting = false;
-            ctx.beginPath();
-        }
-    
-        function dibujar(e) {
-            if (!painting) return;
-    
-            const rect = canvas.getBoundingClientRect();
-            ctx.lineWidth = grosorPincel; // <-- USA LA VARIABLE
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = color;
-    
-            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-        }
-    
-        // Cambiar el color del pincel
-        function cambiarColor(nuevoColor) {
-            color = nuevoColor;
-        }
-    
-        // Activar la herramienta de "check"
-        function activarCheck() {
-            dibujandoCheck = !dibujandoCheck; // Alternar el estado de la herramienta
-        }
-    
-        // Dibujar el "check" en el canvas
-        canvas.addEventListener('click', function(e) {
-            if (dibujandoCheck) {
-                const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-    
-                // Dibujar el "check" (puedes modificar el estilo si lo deseas)
-                ctx.fillStyle = color;
-                ctx.font = "30px Arial";
-                ctx.fillText("✔️", x - 10, y + 10); // Ajusta la posición según lo necesites
-            }
-        });
-    
-        // Limpiar el canvas
-        function borrarCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-    
-        // Guardar la imagen
-        function guardarImagen() {
-            const dataURL = canvas.toDataURL('image/png');
-            document.getElementById('dentigrama_canvas_input').value = dataURL;
-            alert("Dentigrama guardado para enviar con el formulario");
-        }
-    
-        // Eventos para dibujar en el canvas
-        canvas.addEventListener('mousedown', empezarDibujo);
-        canvas.addEventListener('mouseup', finalizarDibujo);
-        canvas.addEventListener('mousemove', dibujar);
-    </script>
+    <form action="{{ url_for('pacientes.editar_paciente', id=paciente.id) }}" method="POST" enctype="multipart/form-data">
+        
+        <!-- ============================================== -->
+        <!-- DATOS PERSONALES (NO PLEGABLE, PERO CON ESTILO DE TARJETA) -->
+        <!-- ============================================== -->
+        <fieldset class="border p-3">
+            <legend class="w-auto px-2 d-flex align-items-center">
+                <i data-lucide="user-circle" class="accordion-icon"></i> 
+                Datos Personales
+            </legend>
+            <div class="p-3">
+                <div class="row mb-3">
+                    {{ render_campo('Nombres', 'nombres', paciente) }}
+                    {{ render_campo('Apellidos', 'apellidos', paciente) }}
+                    <div class="col-md-3">
+                        <label for="tipo_documento" class="form-label">Tipo de Documento</label>
+                        <select class="form-select" id="tipo_documento" name="tipo_documento">
+                            <option value="CC" {% if paciente.tipo_documento == 'CC' %}selected{% endif %}>Cédula</option>
+                            <option value="TI" {% if paciente.tipo_documento == 'TI' %}selected{% endif %}>T. Identidad</option>
+                            <option value="RC" {% if paciente.tipo_documento == 'RC' %}selected{% endif %}>Registro Civil</option>
+                            <option value="CE" {% if paciente.tipo_documento == 'CE' %}selected{% endif %}>Cédula Extranjería</option>
+                            <option value="PA" {% if paciente.tipo_documento == 'PA' %}selected{% endif %}>Pasaporte</option>
+                            <option value="PPT" {% if paciente.tipo_documento == 'PPT' %}selected{% endif %}>Permiso Protección</option>
+                        </select>
+                    </div>
+                    {{ render_campo('Documento', 'documento', paciente) }}
+                </div>
+                <div class="row mb-3">
+                    {{ render_campo('Fecha de Nacimiento', 'fecha_nacimiento', paciente, type='date') }}
+                    {{ render_campo('Edad', 'edad', paciente, type='number') }}
+                    {{ render_campo('Email', 'email', paciente, type='email') }}
+                    {{ render_campo('Teléfono', 'telefono', paciente) }}
+                </div>
+                 <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="genero" class="form-label">Género</label>
+                        <select class="form-select" id="genero" name="genero">
+                            <option value="Masculino" {% if paciente.genero == 'Masculino' %}selected{% endif %}>Masculino</option>
+                            <option value="Femenino" {% if paciente.genero == 'Femenino' %}selected{% endif %}>Femenino</option>
+                            <option value="Otro" {% if paciente.genero == 'Otro' %}selected{% endif %}>Otro</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="estado_civil" class="form-label">Estado Civil</label>
+                        <select class="form-select" id="estado_civil" name="estado_civil">
+                             <option value="Soltero/a" {% if paciente.estado_civil == 'Soltero/a' %}selected{% endif %}>Soltero/a</option>
+                             <option value="Casado/a" {% if paciente.estado_civil == 'Casado/a' %}selected{% endif %}>Casado/a</option>
+                             <option value="Unión Libre" {% if paciente.estado_civil == 'Unión Libre' %}selected{% endif %}>Unión Libre</option>
+                             <option value="Separado/a" {% if paciente.estado_civil == 'Separado/a' %}selected{% endif %}>Separado/a</option>
+                             <option value="Viudo/a" {% if paciente.estado_civil == 'Viudo/a' %}selected{% endif %}>Viudo/a</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
 
-</body>
-</html>
+        <!-- ============================================== -->
+        <!-- ACORDEÓN REUTILIZADO PARA EL RESTO DE SECCIONES -->
+        <!-- ============================================== -->
+        {% include '_accordion_registro_paciente.html' with context %}
+        
+        <!-- ============================================== -->
+        <!-- BOTONES FINALES -->
+        <!-- ============================================== -->
+        <div class="mt-5 mb-5 d-flex gap-3 justify-content-center">
+            <button type="submit" class="btn btn-dark">Guardar Cambios</button>
+            <a href="{{ url_for('pacientes.mostrar_paciente', id=paciente.id) }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+
+{% endblock %}

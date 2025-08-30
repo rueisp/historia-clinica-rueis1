@@ -3,7 +3,13 @@
 import os
 from flask import Flask
 from .extensions import db, migrate, login_manager
-# No es necesario importar Usuario aquí si se importa dentro de la función
+import cloudinary 
+from dotenv import load_dotenv
+
+# Cargar automáticamente las variables definidas en .env
+load_dotenv()
+
+
 
 def create_app():
     """Application Factory Function"""
@@ -14,14 +20,28 @@ def create_app():
     app.config['SECRET_KEY'] = '23456'
     app.config['SESSION_COOKIE_SECURE'] = False
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:23456@localhost:5432/clinica'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    
+    app.config['SQLALCHEMY_POOL_RECYCLE'] = 280
+    
+    app.config['SQLALCHEMY_POOL_SIZE'] = 5
+
 
     app.config['UPLOAD_FOLDER_DENTIGRAMAS'] = os.path.join(app.static_folder, 'img', 'pacientes', 'dentigramas')
     app.config['UPLOAD_FOLDER_IMAGENES'] = os.path.join(app.static_folder, 'img', 'pacientes', 'imagenes')
 
     os.makedirs(app.config['UPLOAD_FOLDER_DENTIGRAMAS'], exist_ok=True)
     os.makedirs(app.config['UPLOAD_FOLDER_IMAGENES'], exist_ok=True)
+    
+        # 👇▼▼▼ LÍNEAS 2, 3 y 4: AÑADIR ESTE BLOQUE DE CONFIGURACIÓN COMPLETO ▼▼▼👇
+    cloudinary.config(
+        cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME'),
+        api_key = os.environ.get('CLOUDINARY_API_KEY'),
+        api_secret = os.environ.get('CLOUDINARY_API_SECRET'),
+        secure = True
+    )
+    # ▲▲▲ FIN DEL BLOQUE A AÑADIR ▲▲▲
 
     # --- 2. INICIALIZAR EXTENSIONES CON LA APP ---
     db.init_app(app)

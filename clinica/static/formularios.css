@@ -1,0 +1,101 @@
+/* Archivo: clinica/static/css/formularios.css */
+
+/* --- ESTILOS MEJORADOS PARA EL ACORDEÓN DE BOOTSTRAP --- */
+
+/* 1. Contenedor principal del acordeón */
+.accordion {
+    --bs-accordion-border-width: 0; /* Eliminamos los bordes por defecto de Bootstrap */
+    --bs-accordion-border-radius: 12px; /* Redondeamos las esquinas */
+}
+
+/* 2. Cada "item" o panel del acordeón */
+.accordion-item {
+    margin-bottom: 1rem; /* <<<--- ESTA ES LA SEPARACIÓN QUE BUSCABAS */
+    border: none; /* Quitamos el borde para usar una sombra */
+    border-radius: 12px !important; /* Aseguramos el redondeo */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05); /* Sombra sutil para efecto "flotante" */
+    overflow: hidden; /* Importante para que el contenido no se salga de las esquinas redondeadas */
+}
+
+/* 3. El botón que funciona como cabecera de cada panel */
+.accordion-button {
+    background-color: #ffffff; /* Fondo blanco cuando está cerrado */
+    font-weight: 600;
+    color: #343a40; /* Texto oscuro */
+    font-size: 1.05rem;
+    padding: 1rem 1.25rem;
+    display: flex; /* Para alinear el icono y el texto */
+    align-items: center;
+}
+
+/* 4. Estilo del botón cuando el panel está ABIERTO */
+.accordion-button:not(.collapsed) {
+    background-color: #111827; /* Fondo oscuro (puedes usar tu color primario) */
+    color: white;
+    box-shadow: none; /* Quitamos la sombra de "activo" de Bootstrap */
+}
+
+/* 5. Quitamos el horrible borde azul de "focus" al hacer clic */
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: transparent;
+}
+
+/* 6. Estilo para los iconos que vamos a añadir */
+.accordion-icon {
+    margin-right: 12px;
+    width: 20px;
+    height: 20px;
+    stroke-width: 2.5; /* Grosor del icono */
+    color: #6c757d; /* Color gris para el icono */
+    transition: color 0.15s ease-in-out;
+}
+
+/* El icono también cambia de color cuando el panel está abierto */
+.accordion-button:not(.collapsed) .accordion-icon {
+    color: white;
+}
+
+/* 7. Cambiamos el icono de flecha por defecto de Bootstrap */
+.accordion-button::after {
+    /* Puedes personalizarlo o incluso ocultarlo si prefieres */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%236c757d'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+
+.accordion-button:not(.collapsed)::after {
+    /* Flecha blanca cuando el panel está abierto */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+
+/* --- ESTILOS PARA LOS TEXTAREA EN FORMULARIOS --- */
+
+/* 1. Definimos un tamaño inicial más pequeño */
+.accordion-body textarea.form-control {
+    min-height: 80px; /* Una altura mínima razonable */
+    height: 80px;     /* Altura inicial */
+    resize: vertical; /* <<<--- ESTA ES LA PROPIEDAD MÁGICA */
+}
+
+/* 2. Opcional: un estilo más sutil para la barra de redimensionamiento */
+.accordion-body textarea.form-control::-webkit-resizer {
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent #cccccc #cccccc;
+}
+
+/* Añade esto al final de formularios.css */
+fieldset.border {
+    border: none !important;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    margin-bottom: 1rem;
+}
+
+fieldset.border legend {
+    font-weight: 600;
+    font-size: 1.05rem;
+    padding: 1rem 1.25rem;
+    width: 100%;
+    border-bottom: 1px solid #f0f0f0;
+}

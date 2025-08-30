@@ -93,11 +93,8 @@ footer {
 
 /* Imagen dentigrama */
 #dentigrama_canvas {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    border: 1px solid #ccc;
     display: block;
+    border: 1px solid #ccc;
 }
 .btn-glass {
     background-color: #007bff;

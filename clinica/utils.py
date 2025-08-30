@@ -206,6 +206,39 @@ def convertir_a_fecha(valor):
         return datetime.strptime(valor, '%Y-%m-%d').date()
     except (ValueError, TypeError):
         return None
+    
+    
+# --- PEGA ESTA NUEVA FUNCIÓN AL FINAL DE TU ARCHIVO utils.py ---
+
+def extract_public_id_from_url(url):
+    """
+    Extrae el public_id de una URL de Cloudinary de forma robusta.
+    """
+    if not isinstance(url, str):
+        return None
+    try:
+        # Divide la URL por '/upload/' para aislar la parte relevante
+        parts = url.split('/upload/')
+        if len(parts) < 2:
+            return None # Si '/upload/' no está, no es una URL de Cloudinary válida
+
+        # Lo que nos interesa es lo que viene después: v12345/folder/name.png
+        path_part = parts[1]
+        
+        # Opcional pero recomendado: quitar la parte de la versión (ej. 'v1234567/')
+        # para que sea más limpio, aunque Cloudinary funciona con ella.
+        if path_part.startswith('v') and path_part.split('/')[0][1:].isdigit():
+            path_part = '/'.join(path_part.split('/')[1:])
+
+        # Finalmente, quitamos la extensión del archivo (.png, .jpg, etc.)
+        public_id = path_part.rsplit('.', 1)[0]
+        
+        return public_id
+        
+    except (ValueError, IndexError):
+        # Captura cualquier error si el formato de la URL es inesperado
+        current_app.logger.warning(f"No se pudo extraer el public_id de la URL: {url}")
+        return None    
 
 
 

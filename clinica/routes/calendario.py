@@ -241,7 +241,7 @@ def registrar_cita(paciente_id_param):
                     documento=documento_pac_form,
                     telefono=telefono_pac_form,
                     odontologo=current_user,
-                    dentigrama_canvas=dentigrama_db_path # <<<--- LÍNEA CLAVE AÑADIDA
+                    dentigrama_url=dentigrama_url,
                 )
                 db.session.add(paciente_para_la_cita)
                 paciente_fue_creado_ahora = True
@@ -292,7 +292,7 @@ def registrar_cita(paciente_id_param):
                 documento=documento_pac_form,
                 telefono=telefono_pac_form,
                 odontologo=current_user,
-                dentigrama_canvas=dentigrama_db_path
+                dentigrama_url=dentigrama_url,
             )
             
             db.session.add(paciente_para_la_cita)

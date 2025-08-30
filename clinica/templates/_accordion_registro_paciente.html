@@ -1,0 +1,206 @@
+<!-- Archivo: _accordion_registro_paciente.html (Versión Final y Corregida) -->
+{% from '_componentes_paciente.html' import render_campo, render_campo_textarea %}
+
+<div class="accordion mt-3" id="accordionRegistroPaciente">
+
+    <!-- =========== SECCIÓN 1: DIRECCIÓN Y ASEGURADORA =========== -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingDireccionAseguradora">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDireccionAseguradora" aria-expanded="false" aria-controls="collapseDireccionAseguradora">
+                <i data-lucide="map-pin" class="accordion-icon"></i>
+                <strong>Dirección y Aseguradora</strong>
+            </button>
+        </h2>
+        <div id="collapseDireccionAseguradora" class="accordion-collapse collapse" aria-labelledby="headingDireccionAseguradora" data-bs-parent="#accordionRegistroPaciente">
+            <div class="accordion-body">
+                <div class="row mb-3">
+                    {{ render_campo('Dirección', 'direccion', None) }}
+                    {{ render_campo('Barrio', 'barrio', None) }}
+                    {{ render_campo('Municipio', 'municipio', None) }}
+                    {{ render_campo('Departamento', 'departamento', None) }}
+                </div>
+                <div class="row mb-3">
+                    {{ render_campo('Nombre de Aseguradora', 'aseguradora', None) }}
+                    <div class="col-md-3">
+                        <label for="tipo_vinculacion" class="form-label">Tipo de Vinculación</label>
+                        <select class="form-select" id="tipo_vinculacion" name="tipo_vinculacion">
+                            <option value="">Seleccione</option>
+                            <option value="Contribuyente">Contribuyente</option>
+                            <option value="Beneficiario">Beneficiario</option>
+                            <option value="Subsidiado">Subsidiado</option>
+                        </select>
+                    </div>
+                    {{ render_campo('Ocupación', 'ocupacion', None) }}
+                </div>
+            </div>
+        </div>
+    </div> <!-- ✅ CIERRE CORRECTO DEL PRIMER ITEM -->
+
+    <!-- =========== SECCIÓN 2: DATOS DEL RESPONSABLE =========== -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingResponsable">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseResponsable" aria-expanded="false" aria-controls="collapseResponsable">
+                <i data-lucide="shield" class="accordion-icon"></i>
+                <strong>Datos del Responsable</strong>
+            </button>
+        </h2>
+        <div id="collapseResponsable" class="accordion-collapse collapse" aria-labelledby="headingResponsable" data-bs-parent="#accordionRegistroPaciente">
+            <div class="accordion-body">
+                <div class="row mb-3">
+                    {{ render_campo('Nombre del Responsable', 'nombre_responsable', None) }}
+                    {{ render_campo('Teléfono del Responsable', 'telefono_responsable', None) }}
+                    {{ render_campo('Parentesco', 'parentesco', None) }}
+                    {{ render_campo('Referido por', 'referido_por', None) }}
+                </div>
+            </div>
+        </div>
+    </div> <!-- ✅ CIERRE CORRECTO DEL SEGUNDO ITEM -->
+    
+    <!-- =========== SECCIÓN 3: ANTECEDENTES PERSONALES =========== -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingAntecedentes">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAntecedentes" aria-expanded="false" aria-controls="collapseAntecedentes">
+                <i data-lucide="file-text" class="accordion-icon"></i>
+                <strong>Antecedentes Personales</strong>
+            </button>
+        </h2>
+        <div id="collapseAntecedentes" class="accordion-collapse collapse" aria-labelledby="headingAntecedentes" data-bs-parent="#accordionRegistroPaciente">
+            <div class="accordion-body">
+                <div class="row">
+                    {{ render_campo_textarea('Motivo de Consulta', 'motivo_consulta', None) }}
+                    {{ render_campo_textarea('Enfermedad Actual', 'enfermedad_actual', None) }}
+                    {{ render_campo_textarea('Antecedentes Personales', 'antecedentes_personales', None) }}
+                    {{ render_campo_textarea('Antecedentes Familiares', 'antecedentes_familiares', None) }}
+                    {{ render_campo_textarea('Antecedentes Quirúrgicos', 'antecedentes_quirurgicos', None) }}
+                    {{ render_campo_textarea('Antecedentes Hemorrágicos', 'antecedentes_hemorragicos', None) }}
+                    {{ render_campo_textarea('Farmacológicos', 'farmacologicos', None) }}
+                    {{ render_campo_textarea('Reacción a Medicamentos', 'reaccion_medicamentos', None) }}
+                    {{ render_campo_textarea('Alergias', 'alergias', None) }}
+                    {{ render_campo_textarea('Hábitos', 'habitos', None) }}
+                    {{ render_campo_textarea('Higiene Oral (Cepillado)', 'cepillado', None) }}
+                    {{ render_campo_textarea('Examen Físico', 'examen_fisico', None) }}
+                    {{ render_campo_textarea('Última Visita al Odontólogo', 'ultima_visita_odontologo', None) }}
+                    {{ render_campo_textarea('Plan de Tratamiento', 'plan_tratamiento', None) }}
+                    {{ render_campo_textarea('Observaciones', 'observaciones', None) }}
+                </div>
+            </div>
+        </div>
+    </div> <!-- ✅ CIERRE CORRECTO DEL TERCER ITEM -->
+
+
+    <!-- =========== SECCIÓN 4: DENTIGRAMA (ADAPTADO PARA CREAR Y EDITAR) =========== -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingDentigrama">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDentigrama" aria-expanded="false" aria-controls="collapseDentigrama">
+                <i data-lucide="image" class="accordion-icon"></i>
+                <strong>Dentigrama</strong>
+            </button>
+        </h2>
+        <div id="collapseDentigrama" class="accordion-collapse collapse" aria-labelledby="headingDentigrama" data-bs-parent="#accordionRegistroPaciente">
+<!-- En _accordion_registro_paciente.html -->
+
+            <div class="accordion-body">
+                        
+                <!-- Contenedor visual del dentigrama. TIENE el fondo. -->
+                <div id="dentigrama-container" style="position: relative; width: 800px; height: 400px; background-image: url('{{ url_for('static', filename='img/plantilla_dentigrama.png') }}'); background-size: contain; background-repeat: no-repeat; margin: 0 auto; border: 1px solid #ccc;">
+                    
+                    <!-- El canvas donde se dibuja. Es un hijo directo. -->
+                    <canvas id="dentigrama_canvas" width="800" height="400" style="position: absolute; top: 0; left: 0;"></canvas>
+                    
+                    <!-- Imagen oculta para precargar los trazos en modo edición. NO es visible. -->
+                    {% if paciente and paciente.dentigrama_url %}
+                        <img id="dentigrama_overlay_src" src="{{ paciente.dentigrama_url }}" style="display: none;">
+                    {% endif %}
+                </div>
+
+                <div class="mt-3 text-center">
+                    <button type="button" class="btn btn-light btn-sm" id="btnColorRojo">🔴 Rojo</button>
+                    <button type="button" class="btn btn-light btn-sm" id="btnColorAzul">🔵 Azul</button>
+                    <button type="button" class="btn btn-light btn-sm" id="btnColorNegro">⚫ Negro</button>
+                    <button type="button" class="btn btn-light btn-sm" id="btnActivarCheck">✔️ Check</button>
+                    <span class="mx-2">/</span>
+                    <button type="button" class="btn btn-warning btn-sm" id="btnLimpiar">🧹 Limpiar</button>
+                    <button type="button" class="btn btn-info btn-sm" id="btnDeshacer">↩️ Deshacer</button>
+                    <span class="mx-2">/</span>
+                    <button type="button" class="btn btn-primary" id="btnGuardarDentigrama">💾 Aplicar Cambios al Dentigrama</button>
+                </div>```
+
+                
+                <!-- Input oculto para la URL de Cloudinary -->
+                <input type="hidden" name="dentigrama_url" id="dentigrama_url_input" value="{{ paciente.dentigrama_url or '' }}">
+
+            </div>
+        </div>
+    </div>
+
+<!-- Archivo: _accordion_registro_paciente.html -->
+
+<!-- =========== SECCIÓN 5: IMÁGENES DEL PACIENTE (VERSIÓN FINAL PARA EDICIÓN) =========== -->
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingImagenes">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseImagenes" aria-expanded="false" aria-controls="collapseImagenes">
+            <i data-lucide="images" class="accordion-icon"></i>
+            <strong>Imágenes del Paciente</strong>
+        </button>
+    </h2>
+    <div id="collapseImagenes" class="accordion-collapse collapse" aria-labelledby="headingImagenes" data-bs-parent="#accordionRegistroPaciente">
+        <div class="accordion-body">
+            <div class="row">
+
+                <!-- === LÓGICA PARA IMAGEN 1 === -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Imagen 1</label>
+                    
+                    {# Si la variable 'paciente' existe y tiene una URL, la mostramos #}
+                    {% if paciente and paciente.imagen_1_url %}
+                        <div class="mb-2">
+                            <img src="{{ paciente.imagen_1_url }}" alt="Imagen 1 actual" class="img-fluid rounded border" style="max-height: 200px;">
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="eliminar_imagen_1" id="eliminar_imagen_1">
+                            <label class="form-check-label" for="eliminar_imagen_1">
+                                Eliminar imagen 1 actual
+                            </label>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-light p-2 text-center" role="alert">
+                            No hay imagen subida.
+                        </div>
+                    {% endif %}
+                    
+                    <label for="imagen_1_url" class="form-label small text-muted mt-2">Subir nueva / Reemplazar</label>
+                    <input type="file" class="form-control" id="imagen_1_url" name="imagen_1_url" accept="image/*">
+                </div>
+
+                <!-- === LÓGICA PARA IMAGEN 2 === -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Imagen 2</label>
+                    
+                    {% if paciente and paciente.imagen_2_url %}
+                        <div class="mb-2">
+                            <img src="{{ paciente.imagen_2_url }}" alt="Imagen 2 actual" class="img-fluid rounded border" style="max-height: 200px;">
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="eliminar_imagen_2" id="eliminar_imagen_2">
+                            <label class="form-check-label" for="eliminar_imagen_2">
+                                Eliminar imagen 2 actual
+                            </label>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-light p-2 text-center" role="alert">
+                            No hay imagen subida.
+                        </div>
+                    {% endif %}
+
+                    <label for="imagen_2_url" class="form-label small text-muted mt-2">Subir nueva / Reemplazar</label>
+                    <input type="file" class="form-control" id="imagen_2_url" name="imagen_2_url" accept="image/*">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<!-- Al final de _accordion_registro_paciente.html -->
+<script src="{{ url_for('static', filename='js/dentigrama_logic.js') }}"></script>

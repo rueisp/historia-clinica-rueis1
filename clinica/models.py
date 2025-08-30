@@ -44,9 +44,9 @@ class Paciente(db.Model):
     ultima_visita_odontologo = db.Column(db.Text, nullable=True)
     plan_tratamiento = db.Column(db.Text, nullable=True)
     observaciones = db.Column(db.Text, nullable=True)
-    imagen_1 = db.Column(db.String(200), nullable=True)
-    imagen_2 = db.Column(db.String(200), nullable=True)
-    dentigrama_canvas = db.Column(db.String(200), nullable=True)
+    imagen_1_url = db.Column(db.String(200), nullable=True)
+    imagen_2_url = db.Column(db.String(200), nullable=True)
+    dentigrama_url = db.Column(db.String(255), nullable=True)
     odontologo_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     odontologo = db.relationship('Usuario', back_populates='pacientes')
 
